@@ -1,0 +1,15 @@
+import sys
+
+DEBUG = True
+TESTING = "pytest" in sys.modules
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+SECRET_KEY = 'abc123'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
