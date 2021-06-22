@@ -7,21 +7,44 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0004_auto_20210622_1022'),
+        ("web", "0004_auto_20210622_1022"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RatingQuestion',
+            name="RatingQuestion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(blank=True, max_length=120, null=True)),
-                ('description', models.TextField(blank=True)),
-                ('scale', models.CharField(choices=[('1-10', '1 to 10'), ('text', 'Text field'), ('bool', 'Yes or no')], max_length=64)),
-                ('has_na', models.BooleanField(default=False)),
-                ('is_required', models.BooleanField(default=False)),
-                ('order', models.IntegerField()),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='web.project')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(blank=True, max_length=120, null=True)),
+                ("description", models.TextField(blank=True)),
+                (
+                    "scale",
+                    models.CharField(
+                        choices=[
+                            ("1-10", "1 to 10"),
+                            ("text", "Text field"),
+                            ("bool", "Yes or no"),
+                        ],
+                        max_length=64,
+                    ),
+                ),
+                ("has_na", models.BooleanField(default=False)),
+                ("is_required", models.BooleanField(default=False)),
+                ("order", models.IntegerField()),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="web.project"
+                    ),
+                ),
             ],
         ),
     ]
