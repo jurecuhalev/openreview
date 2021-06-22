@@ -19,11 +19,20 @@ class UserProfile(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-class Entry(models.Model):
+class Category(models.Model):
+    name = models.CharField(max_length=120)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
+
+class Entry(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.TextField()
     key = models.CharField(null=True, blank=True, max_length=120)
+
+    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
 
     data = JSONField(blank=True, null=True)
 
