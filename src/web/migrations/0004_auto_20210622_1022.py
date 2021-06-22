@@ -7,21 +7,38 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0003_alter_entry_data'),
+        ("web", "0003_alter_entry_data"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=120)),
-                ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='web.project')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=120)),
+                (
+                    "project",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="web.project"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='entry',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='web.category'),
+            model_name="entry",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="web.category",
+            ),
         ),
     ]

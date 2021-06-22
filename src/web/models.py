@@ -45,3 +45,22 @@ class Entry(models.Model):
             return "#{} - {}".format(self.key, self.title)
         else:
             return self.title
+
+
+QUESTION_SCALES = (
+    ("1-10", "1 to 10"),
+    ("text", "Text field"),
+    ("bool", "Yes or no"),
+)
+
+
+class RatingQuestion(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    title = models.CharField(null=True, blank=True, max_length=120)
+    description = models.TextField(blank=True)
+
+    scale = models.CharField(choices=QUESTION_SCALES, max_length=64)
+    has_na = models.BooleanField(default=False)
+    is_required = models.BooleanField(default=False)
+
+    order = models.IntegerField()
