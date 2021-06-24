@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import JSONField
 
 
 class Project(models.Model):
     name = models.CharField(max_length=120)
+    fields = models.JSONField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -26,6 +26,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
 
 class Entry(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -34,7 +38,7 @@ class Entry(models.Model):
 
     category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
 
-    data = JSONField(blank=True, null=True)
+    data = models.JSONField(blank=True, null=True)
 
     class Meta:
         verbose_name = "Entry"
