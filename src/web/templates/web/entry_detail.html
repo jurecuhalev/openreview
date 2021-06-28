@@ -1,8 +1,12 @@
-<h2>{{ entry.title }} // {{ entry.project.name }}</h2>
+{% extends "base.html" %}
 
-<dl>
-    {% for line in submission_data %}
-        <dt>{{ line.label }} <em>({{ line.type }})</em></dt>
-        <dd>{{ line.value|linebreaks }}</dd>
-    {% endfor %}
-</dl>
+{% block content %}
+    <h2>{{ entry.title }} // {{ entry.project.name }}</h2>
+
+    <dl>
+        {% for line in submission_data %}
+            <dt>{{ line.label }} <em>({{ line.type }})</em></dt>
+            <dd>{{ line.value|linebreaks }}</dd>
+        {% endfor %}
+    </dl>
+{% endblock %}

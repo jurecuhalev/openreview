@@ -13,6 +13,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_vite",
     "web",
 ]
 
@@ -85,6 +86,11 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DJANGO_VITE_ASSETS_PATH = Path.joinpath(BASE_DIR, "frontend/static/frontend/dist/")
+STATIC_ROOT = "collectedstatic"
+STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH]
+DJANGO_VITE_DEV_MODE = False
 
 CI = os.environ.get("CI")
 if CI:
