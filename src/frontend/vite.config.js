@@ -21,6 +21,6 @@ export default {
                 'main.js': 'src/main.ts',
                 // 'style.css': 'src/style.css',
             }
-        }
+        },
     }
 }
