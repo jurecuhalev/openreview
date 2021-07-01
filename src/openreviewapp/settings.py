@@ -40,6 +40,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "web.context_processors.logo_url",
             ],
         },
     },
@@ -91,6 +92,8 @@ DJANGO_VITE_ASSETS_PATH = Path.joinpath(BASE_DIR, "frontend/static/frontend/dist
 STATIC_ROOT = "collectedstatic"
 STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH]
 DJANGO_VITE_DEV_MODE = False
+MEDIA_ROOT = Path.joinpath(BASE_DIR, "../media")
+MEDIA_URL = "/media/"
 
 CI = os.environ.get("CI")
 if CI:

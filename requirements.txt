@@ -2,4 +2,5 @@ Django>=3.2,<3.3
 psycopg2==2.8.6
 requests==2.25.1
 icecream==2.1.0
-
+Pillow==8.3.0
+django-svg-image-form-field==1.0.1

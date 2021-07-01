@@ -76,3 +76,11 @@ class RatingAnswer(models.Model):
 
     value = models.TextField(blank=True, null=True)
     is_na = models.BooleanField(default=False)
+
+
+class SiteSettings(models.Model):
+    logo = models.ImageField(upload_to="public", blank=True)
+
+    class Meta:
+        verbose_name = "Site Settings"
+        verbose_name_plural = "Site Settings"

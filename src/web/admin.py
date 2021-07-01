@@ -9,7 +9,10 @@ from web.models import (
     Entry,
     RatingQuestion,
     RatingAnswer,
+    SiteSettings,
 )
+
+from web.forms import SiteSettingsForm
 
 
 class UserProfilelInline(admin.StackedInline):
@@ -45,6 +48,11 @@ class RatingQuestionAdmin(admin.ModelAdmin):
 @admin.register(RatingAnswer)
 class RatingAnswerAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    form = SiteSettingsForm
 
 
 admin.site.unregister(User)
