@@ -39,7 +39,7 @@ class EntryAdmin(admin.ModelAdmin):
 
 @admin.register(RatingQuestion)
 class RatingQuestionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["title", "project", "scale", "order"]
 
 
 @admin.register(RatingAnswer)
