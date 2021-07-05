@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <ul>
-        {% for entry in entry_list %}
-            <li><a href="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">{{ entry.title }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="prose">
+        <ul>
+            {% for entry in entry_list %}
+                <li><a href="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">{{ entry.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

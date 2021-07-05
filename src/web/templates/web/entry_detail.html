@@ -1,12 +1,46 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <h2>{{ entry.title }} // {{ entry.project.name }}</h2>
+{% block heading %}#{{ entry.key }} {{ entry.title }} // {{ entry.project.name }}{% endblock %}
 
-    <dl>
-        {% for line in submission_data %}
-            <dt>{{ line.label }} <em>({{ line.type }})</em></dt>
-            <dd>{{ line.value|linebreaks }}</dd>
-        {% endfor %}
-    </dl>
+{% block content %}
+    <div class="prose prose-lg">
+        <dl>
+            {% for line in submission_data %}
+                {% if line.inputs %}
+                    <dt class="font-bold text-xl mb-2 mt-6">{{ line.label }}</dt>
+                    {% if line.type == 'address' %}
+                        <dd class="type-{{ iline.type }} mr-2">
+                        {% for iline in line.inputs %}
+                            {{ iline.value }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                        </dd>
+                    {% else %}
+                        <div class="{% if not line.type == 'checkbox' %}flex{% endif %} h-auto mb-4">
+                            {% for iline in line.inputs %}
+                                <div class="">
+                                    {% if line.type != 'name' and line.type != 'checkbox' %}
+                                        <dt class="type-{{ iline.type }} font-bold">{{ iline.label }}</dt>
+                                    {% endif %}
+
+                                    <dd class="type-{{ iline.type }} mr-2">{{ iline.value|urlize|linebreaksbr }}</dd>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    {% if line.type == 'section' %}
+                        <dt class="font-bold mb-4 text-xl mb-2 mt-6">{{ line.label }}</dt>
+                    {% else %}
+                        <dt class="type-{{ line.type }} font-bold mt-4 mb-2">{{ line.label }} <em>({{ line.type }})</em></dt>
+                        <dd class="type-{{ line.type }} mb-6">{{ line.value|urlize|linebreaksbr }}</dd>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </dl>
+
+    </div>
+    <form class="form"></form>
+    {{ form.as_p }}
+    </form>
+
 {% endblock %}

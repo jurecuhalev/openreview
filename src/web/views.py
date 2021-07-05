@@ -1,8 +1,10 @@
 # from django.shortcuts import render
 
 from django.views.generic import ListView, DetailView
+from icecream import ic
 
-from web.models import Entry
+from web.forms import RatingForm
+from web.models import Entry, RatingQuestion, RatingAnswer
 from web.submissions_processing import merge_fields_with_submission_data
 
 
@@ -24,5 +26,13 @@ class EntryDetailView(DetailView):
         context["submission_data"] = merge_fields_with_submission_data(
             fields=entry.project.fields, data=entry.data
         )
+        ic(context["submission_data"])
+
+        questions = RatingQuestion.objects.filter(project=entry.project).order_by(
+            "order"
+        )
+        answers = RatingAnswer.objects.filter(user=self.request.user, entry=entry)
+        form = RatingForm(questions=questions, answers=answers)
+        context["form"] = form
 
         return context
