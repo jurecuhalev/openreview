@@ -31,7 +31,7 @@
                     {% if line.type == 'section' %}
                         <dt class="font-bold mb-4 text-xl mb-2 mt-6">{{ line.label }}</dt>
                     {% else %}
-                        <dt class="type-{{ line.type }} font-bold mt-4 mb-2">{{ line.label }} <em>({{ line.type }})</em></dt>
+                        <dt class="type-{{ line.type }} font-bold mt-4 mb-2">{{ line.label }}</dt>
                         <dd class="type-{{ line.type }} mb-6">{{ line.value|urlize|linebreaksbr }}</dd>
                     {% endif %}
                 {% endif %}
