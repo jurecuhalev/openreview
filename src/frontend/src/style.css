@@ -6,3 +6,27 @@
   color: #2c3e50;
   margin-top: 60px;
 }
+
+.form p {
+  @apply font-bold mb-4 mt-8;
+}
+
+.form-radio {
+  @apply flex;
+}
+
+.form-radio li > label {
+  @apply p-4 border mr-2 hover:bg-yellow-200 hover:cursor-pointer;
+}
+
+.form-radio li > label > [type='radio'] {
+  @apply mr-1;
+}
+
+.form-radio li > label:checked {
+  @apply bg-red-500;
+}
+
+.form textarea {
+  @apply max-w-xl w-full h-24 block;
+}

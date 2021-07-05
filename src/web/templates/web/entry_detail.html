@@ -10,9 +10,9 @@
                     <dt class="font-bold text-xl mb-2 mt-6">{{ line.label }}</dt>
                     {% if line.type == 'address' %}
                         <dd class="type-{{ iline.type }} mr-2">
-                        {% for iline in line.inputs %}
-                            {{ iline.value }}{% if not forloop.last %},{% endif %}
-                        {% endfor %}
+                            {% for iline in line.inputs %}
+                                {{ iline.value }}{% if not forloop.last %},{% endif %}
+                            {% endfor %}
                         </dd>
                     {% else %}
                         <div class="{% if not line.type == 'checkbox' %}flex{% endif %} h-auto mb-4">
@@ -39,8 +39,15 @@
         </dl>
 
     </div>
-    <form class="form"></form>
-    {{ form.as_p }}
+    <form class="form" method="post" action="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">
+        {{ form.as_p }}
+
+        {% csrf_token %}
+
+        <button type="submit"
+                class="max-w-xl w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            Save
+        </button>
     </form>
 
 {% endblock %}

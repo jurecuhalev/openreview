@@ -68,11 +68,13 @@ class RatingQuestion(models.Model):
     is_required = models.BooleanField(default=False)
 
     order = models.IntegerField()
+    changed = models.DateTimeField(auto_now=True)
 
 
 class RatingAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE)
+    question = models.ForeignKey(RatingQuestion, on_delete=models.CASCADE)
 
     value = models.TextField(blank=True, null=True)
     is_na = models.BooleanField(default=False)
