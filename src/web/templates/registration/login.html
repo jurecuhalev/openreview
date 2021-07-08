@@ -3,7 +3,7 @@
 {% block heading %}Login{% endblock %}
 
 {% block content %}
-    <form class="flex form items-center">
+    <form class="flex form items-center" action="{% url 'login-key-check' %}" method="post">{% csrf_token %}
         <div class="max-w-lg flex-grow">
             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
 

@@ -1,5 +1,10 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.core.mail import send_mail
 
 
 class Project(models.Model):
@@ -82,7 +87,47 @@ class RatingAnswer(models.Model):
 
 class SiteSettings(models.Model):
     logo = models.ImageField(upload_to="public", blank=True)
+    name = models.CharField(max_length=255, default="Open Review System", blank=True)
+    email = models.EmailField(max_length=255, default="")
+    url = models.TextField(
+        default="http://localhost:8000", help_text="URL without ending slash"
+    )
 
     class Meta:
         verbose_name = "Site Settings"
         verbose_name_plural = "Site Settings"
+
+
+class LoginKey(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField()
+    key = models.CharField(max_length=32)
+
+    used = models.BooleanField(default=False)
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "{} - {}".format(self.user, self.email)
+
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.key = uuid.uuid4().hex
+
+        super(LoginKey, self).save(*args, **kwargs)
+
+    def send_email(self):
+        settings = SiteSettings.objects.latest("pk")
+        body = render_to_string(
+            "mail-login/mail_body.txt",
+            {"url": self.get_absolute_url(), "email": settings.email},
+        )
+        send_mail(
+            "{} login information".format(settings.name),
+            body,
+            settings.email,
+            [self.email],
+        )
+
+    def get_absolute_url(self):
+        settings = SiteSettings.objects.latest("pk")
+        return settings.url + reverse_lazy("login-key-check", kwargs={"key": self.key})

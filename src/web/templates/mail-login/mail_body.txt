@@ -1,0 +1,7 @@
+To login to the Review system, please click on the following link:
+
+{{ url }}
+
+It will stay active for 7 days, afterwards you'll have to request a new one.
+
+If you have any questions or problems, please contact us at {{ email }}.

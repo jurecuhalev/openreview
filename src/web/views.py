@@ -1,18 +1,30 @@
-# from django.shortcuts import render
+from django.shortcuts import render
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.shortcuts import redirect
+import datetime
 from icecream import ic
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib import messages
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, FormView
 
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.html import format_html
 
 
-from web.forms import RatingForm
-from web.models import Entry, RatingQuestion, RatingAnswer
+from web.forms import RatingForm, LoginForm
+from web.models import Entry, RatingQuestion, RatingAnswer, LoginKey, Project
 from web.submissions_processing import merge_fields_with_submission_data
+
+
+class IndexView(LoginRequiredMixin, ListView):
+    template_name = "web/project_list.html"
+    context_object_name = "project_list"
+
+    def get_queryset(self):
+        return Project.objects.filter(is_active=True)
 
 
 class EntryListView(LoginRequiredMixin, ListView):
@@ -107,3 +119,40 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
                 "pk": self.get_object().pk,
             },
         )
+
+
+class LoginKeyCheckView(FormView):
+    template_name = "mail-login/login_failed.html"
+    form_class = LoginForm
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get("email")
+        user = User.objects.get(email__iexact=email)
+        ctx = {"email": email}
+
+        key = LoginKey(user=user, email=email)
+        key.save()
+        key.send_email()
+
+        return render(self.request, "mail-login/mail_sent.html", ctx)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            key = kwargs.pop("key")
+        except KeyError:
+            return redirect(reverse_lazy("index"))
+
+        today = datetime.datetime.today()
+        if LoginKey.objects.filter(
+            key=key, pub_date__gte=(today - datetime.timedelta(days=7))
+        ).exists():
+            login_key = LoginKey.objects.get(
+                key=key, pub_date__gte=(today - datetime.timedelta(days=7))
+            )
+
+            login_key.user.backend = "django.contrib.auth.backends.ModelBackend"
+            login(self.request, login_key.user)
+
+            return redirect(request.GET.get("next", reverse_lazy("index")))
+
+        return redirect(reverse_lazy("index"))

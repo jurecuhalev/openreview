@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from icecream import ic
 
 from .models import SiteSettings, RatingAnswer
@@ -50,3 +51,21 @@ class RatingForm(forms.Form):
 
             self.fields[field_id] = field
             self.initial[field_id] = initial_value
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.TextInput(attrs={"class": "form-input w-3/4"})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email", "").strip()
+
+        if not User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                "Email you entered is not in our system. Please contact support.",
+                code="invalid-email",
+            )
+
+        return cleaned_data
