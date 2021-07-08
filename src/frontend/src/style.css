@@ -8,7 +8,7 @@
 }
 
 .form p {
-  @apply font-bold mb-4 mt-8;
+  @apply font-bold mb-6 mt-8;
 }
 
 .form-radio {
@@ -28,5 +28,5 @@
 }
 
 .form textarea {
-  @apply max-w-xl w-full h-24 block;
+  @apply max-w-3xl w-full h-24 block mt-2;
 }

@@ -46,6 +46,7 @@ class RatingForm(forms.Form):
                 field.required = True
             else:
                 field.required = False
+            ic(field.required)
 
             self.fields[field_id] = field
             self.initial[field_id] = initial_value

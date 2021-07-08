@@ -7,6 +7,7 @@ from django.views.generic.edit import FormMixin
 
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.html import format_html
 
 
 from web.forms import RatingForm
@@ -84,7 +85,21 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
         return super().form_valid(form)
 
     def get_success_url(self):
-        messages.add_message(self.request, messages.INFO, "Your review has been saved.")
+        entries_url = reverse_lazy(
+            "entry-list",
+            kwargs={
+                "project": self.get_object().project.pk,
+            },
+        )
+        message = format_html(
+            'Your review has been saved. <a class="underline" href="{}">Review another</a>.',
+            entries_url,
+        )
+        messages.add_message(
+            self.request,
+            messages.INFO,
+            message,
+        )
         return reverse_lazy(
             "entry-detail",
             kwargs={
