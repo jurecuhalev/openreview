@@ -14,7 +14,7 @@
 <div class="min-h-screen bg-gray-100">
     {% include "_nav.html" %}
 
-    <div class="py-10">
+    <div class="py-10 max-w-7xl mx-auto">
         {% if messages %}
             <div class="bg-green-300 py-6 -mt-10 mb-6 font-semibold">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,22 +28,20 @@
         {% endif %}
 
         <header>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="px-4 sm:px-6 lg:px-8">
                 <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">
-                    {% block heading %}Dashboard{% endblock %}
+                    {% block heading %}{% endblock %}
                 </h1>
             </div>
         </header>
         <main>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <!-- Replace with your content -->
+            <div class="sm:px-6 lg:px-8">
                 <div class="px-4 py-8 sm:px-0">
                     <div class="rounded-lg h-auto bg-white p-8">
                         {% block content %}
                         {% endblock %}
                     </div>
                 </div>
-                <!-- /End replace -->
             </div>
         </main>
     </div>

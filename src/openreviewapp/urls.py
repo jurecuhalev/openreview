@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -12,5 +12,6 @@ urlpatterns = [
         name="entry-detail",
     ),
     path("project/<int:project>/entry/", EntryListView.as_view(), name="entry-list"),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("admin/", admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

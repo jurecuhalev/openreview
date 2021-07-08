@@ -2,8 +2,9 @@
 
 {% block heading %}#{{ entry.key }} {{ entry.title }} // {{ entry.project.name }}{% endblock %}
 
+
 {% block content %}
-    <div class="prose prose-lg">
+    <div class="prose prose-lg max-w-full mb-20">
         <dl>
             {% for line in submission_data %}
                 {% if line.inputs %}
@@ -39,9 +40,15 @@
         </dl>
 
     </div>
+
+    <header>
+        <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">
+            Your feedback
+        </h1>
+    </header>
+
     <form class="form" method="post" action="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">
         {{ form.as_p }}
-
         {% csrf_token %}
 
         <button type="submit"
