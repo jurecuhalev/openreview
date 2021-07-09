@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -12,7 +13,6 @@ from django.views.generic.edit import FormMixin, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.html import format_html
-
 
 from web.forms import RatingForm, LoginForm
 from web.models import Entry, RatingQuestion, RatingAnswer, LoginKey, Project
@@ -41,10 +41,12 @@ class EntryListView(LoginRequiredMixin, ListView):
             rating_status = {
                 "Waiting for review": self.get_queryset()
                 .exclude(ratinganswer__user=self.request.user)
-                .distinct(),
+                .distinct()
+                .order_by("key"),
                 "Completed reviews": self.get_queryset()
                 .filter(ratinganswer__user=self.request.user)
-                .distinct(),
+                .distinct()
+                .order_by("key"),
             }
 
             context["ratings_by_status"] = rating_status
@@ -84,6 +86,27 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
         context["submission_data"] = merge_fields_with_submission_data(
             fields=entry.project.fields, data=entry.data
         )
+
+        if self.request.user.is_staff:
+            entry = self.get_object()
+            questions = RatingQuestion.objects.filter(project=entry.project).order_by(
+                "order"
+            )
+            answers = (
+                RatingAnswer.objects.filter(entry=entry)
+                .values(
+                    "user",
+                    "user__username",
+                    "question__title",
+                    "value",
+                    "is_na",
+                    "question__order",
+                )
+                .annotate(Count("user"))
+                .order_by("user", "question__order")
+            )
+            ic(answers)
+            context["ratings"] = {"questions": questions, "answers": answers}
 
         return context
 

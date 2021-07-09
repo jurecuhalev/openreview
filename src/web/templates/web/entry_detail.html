@@ -41,20 +41,55 @@
 
     </div>
 
-    <header>
-        <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">
-            Your feedback
-        </h1>
-    </header>
+    {% if request.user.is_staff %}
+        <header class="mb-6">
+            <h1 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">
+                Feedback from reviewers
+            </h1>
+        </header>
 
-    <form class="form" method="post" action="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">
-        {{ form.as_p }}
-        {% csrf_token %}
 
-        <button type="submit"
-                class="flex justify-center py-2 px-8 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Save
-        </button>
-    </form>
+        {% regroup ratings.answers by user__username as ratings_by_user %}
+
+        <ul class="divide-y divide-gray-200">
+            {% for user_rating in ratings_by_user %}
+                <li class="relative bg-white py-5 px-4 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                    <div class="flex justify-between space-x-3">
+                        <div class="min-w-0 flex-1">
+                            <span class="block focus:outline-none mb-4">
+                                <span class="absolute inset-0" aria-hidden="true"></span>
+                                <p class="text-sm font-medium text-gray-900 truncate">{{ user_rating.grouper }}</p>
+                            </span>
+                        </div>
+                    </div>
+
+                    <dl class="mb-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        {% for rating in user_rating.list %}
+                            <span>
+                            <dd class="font-semibold text-gray-900 mb-2">{{ rating.question__title }}</dd>
+                            <dt class="mb-5">{{ rating.value }}</dt>
+                            </span>
+                        {% endfor %}
+                    </dl>
+
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <header>
+            <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">
+                Your feedback
+            </h1>
+        </header>
+        <form class="form" method="post" action="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">
+            {{ form.as_p }}
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="flex justify-center py-2 px-8 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Save
+            </button>
+        </form>
+    {% endif %}
 
 {% endblock %}
