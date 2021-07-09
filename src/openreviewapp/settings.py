@@ -41,6 +41,8 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "web.context_processors.logo_url",
+                "web.context_processors.current_project",
+                "web.context_processors.current_tab",
             ],
         },
     },

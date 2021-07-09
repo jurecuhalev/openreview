@@ -1,3 +1,4 @@
+{% load web_extras %}
 <nav
         x-data="{ isOpen: false }"
         class="bg-white shadow-sm">
@@ -15,51 +16,55 @@
                 </div>
 
                 {% if request.user.is_authenticated %}
-                <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                    <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
-                    <a href="/"
-                       class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                       aria-current="page">Overview</a>
+                    <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+                        <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
+                        <a href="/"
+                           class="tab {% current_tab_class current_tab 'index' %}
+                           aria-current=" page">Overview</a>
 
-                    <a href="#"
-                       class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Entries</a>
+                        {% if current_project %}
+                            <a href="{% url 'entry-list' project=current_project.pk %}"
+                               class="tab {% current_tab_class current_tab 'entry' %}">Entries</a>
+                        {% endif %}
 
-                    <a href="#"
-                       class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Reviewers</a>
-                </div>
+                        {% if request.user.is_staff and current_project %}
+                            <a href="{% url 'reviewer-list' project=current_project.pk %}"
+                               class="tab {% current_tab_class current_tab 'reviewer' %}">Reviewers</a>
+                        {% endif %}
+                    </div>
                 {% endif %}
             </div>
             {% if request.user.is_authenticated %}
-            <div
-                    class="-mr-2 flex items-center sm:hidden">
-                <!-- Mobile menu button -->
-                <button type="button"
-                        @click="isOpen = !isOpen"
-                        class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-                    <!--
-                      Heroicon name: outline/menu
+                <div
+                        class="-mr-2 flex items-center sm:hidden">
+                    <!-- Mobile menu button -->
+                    <button type="button"
+                            @click="isOpen = !isOpen"
+                            class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <!--
+                          Heroicon name: outline/menu
 
-                      Menu open: "hidden", Menu closed: "block"
-                    -->
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                    <!--
-                      Heroicon name: outline/x
+                          Menu open: "hidden", Menu closed: "block"
+                        -->
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <!--
+                          Heroicon name: outline/x
 
-                      Menu open: "block", Menu closed: "hidden"
-                    -->
-                    <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
+                          Menu open: "block", Menu closed: "hidden"
+                        -->
+                        <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -84,11 +89,10 @@
             <a href="#"
                class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Entries</a>
 
-            <a href="#"
-               class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Projects</a>
-
-            <a href="#"
-               class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Calendar</a>
+            {% if request.user.is_staff and current_project %}
+                <a href="{% url 'reviewer-list' project=current_project.pk %}"
+                   class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Calendar</a>
+            {% endif %}
         </div>
     </div>
 </nav>
