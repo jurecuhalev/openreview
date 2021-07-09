@@ -37,12 +37,15 @@
         <main>
             <div class="sm:px-6 lg:px-8">
                 <div class="px-4 py-8 sm:px-0">
-                    <div class="rounded-lg h-auto bg-white p-8">
-                        {% block content %}
-                        {% endblock %}
-                    </div>
+                    {% block content_full %}
+                        <div class="rounded-lg h-auto bg-white p-8">
+                            {% block content %}
+                            {% endblock %}
+                        </div>
+                    {% endblock %}
                 </div>
             </div>
+
         </main>
     </div>
 </div>

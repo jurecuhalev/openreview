@@ -55,6 +55,12 @@ class Entry(models.Model):
         else:
             return self.title
 
+    def ratings(self):
+        reviewers_rated = self.ratinganswer_set.values("user").distinct().count()
+        reviewers_total = self.project.userprofile_set.count()
+
+        return {"reviewers_rated": reviewers_rated, "reviewers_total": reviewers_total}
+
 
 QUESTION_SCALES = (
     ("1-10", "1 to 10"),

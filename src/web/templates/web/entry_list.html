@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <div class="prose">
-        <ul>
+{% block heading %}{{ current_project.name }}{% endblock %}
+
+{% block content_full %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
             {% for entry in entry_list %}
-                <li><a href="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">{{ entry.title }}</a></li>
+                 {% include "web/_entry_group_staff.html" with entry=entry  %}
             {% endfor %}
         </ul>
     </div>
