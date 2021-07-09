@@ -3,11 +3,33 @@
 {% block heading %}{{ current_project.name }}{% endblock %}
 
 {% block content_full %}
-    <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul class="divide-y divide-gray-200">
-            {% for entry in entry_list %}
-                 {% include "web/_entry_group_staff.html" with entry=entry  %}
-            {% endfor %}
-        </ul>
-    </div>
+    {% if request.user.is_staff %}
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200">
+                {% for entry in entry_list %}
+                    {% include "web/_entry_group_staff.html" with entry=entry %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        {% for status, entry_list in ratings_by_status.items %}
+            {% if entry_list %}
+                <header>
+                    <div class="mb-4">
+                        <h2 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">
+                            {{ status }}
+                        </h2>
+                    </div>
+                </header>
+
+                <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+                    <ul class="divide-y divide-gray-200">
+                        {% for entry in entry_list %}
+                            {% include "web/_entry_group.html" with entry=entry %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 {% endblock %}

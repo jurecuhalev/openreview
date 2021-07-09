@@ -1,0 +1,11 @@
+    <li>
+      <a href="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}" class="block hover:bg-gray-50">
+        <div class="px-4 py-4 sm:px-6">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-medium text-indigo-600 truncate">
+              <span class="text-gray-500">#{{ entry.key }}</span> {{ entry.title }}
+            </p>
+          </div>
+        </div>
+      </a>
+    </li>

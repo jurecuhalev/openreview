@@ -34,6 +34,23 @@ class EntryListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Entry.objects.filter(project__pk=self.kwargs["project"])
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if not self.request.user.is_staff:
+            rating_status = {
+                "Waiting for review": self.get_queryset()
+                .exclude(ratinganswer__user=self.request.user)
+                .distinct(),
+                "Completed reviews": self.get_queryset()
+                .filter(ratinganswer__user=self.request.user)
+                .distinct(),
+            }
+
+            context["ratings_by_status"] = rating_status
+
+        return context
+
 
 class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
     model = Entry
