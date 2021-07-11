@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block heading %}Reviewers of {{ current_project.name }}{% endblock %}
+
+{% block content_full %}
+    <div class="bg-white shadow overflow-hidden sm:rounded-md mt-6">
+        <ul>
+            {% for reviewer in reviewer_list %}
+                {% include "web/_reviewer_card.html" with user=reviewer.user count=reviewer.count %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

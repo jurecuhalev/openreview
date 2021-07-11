@@ -1,9 +1,12 @@
+from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 import datetime
+
+from django.views import View
 from icecream import ic
 
 from django.views.generic import ListView, DetailView, TemplateView
@@ -196,3 +199,24 @@ class LoginKeyCheckView(FormView):
             return redirect(request.GET.get("next", reverse_lazy("index")))
 
         return redirect(reverse_lazy("index"))
+
+
+class ReviewerListView(StaffuserRequiredMixin, TemplateView):
+    template_name = "web/reviewer_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project = Project.objects.get(pk=self.kwargs.get("project"))
+
+        user_profiles = project.userprofile_set.all()
+        reviewer_list = []
+
+        for user_profile in user_profiles:
+            count = (
+                user_profile.user.ratinganswer_set.values("entry").distinct().count()
+            )
+            reviewer_list.append({"user": user_profile.user, "count": count})
+
+        context["reviewer_list"] = reviewer_list
+
+        return context
