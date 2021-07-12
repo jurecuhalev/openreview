@@ -108,7 +108,6 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
                 .annotate(Count("user"))
                 .order_by("user", "question__order")
             )
-            ic(answers)
             context["ratings"] = {"questions": questions, "answers": answers}
 
         return context
@@ -165,7 +164,7 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
 
 
 class LoginKeyCheckView(FormView):
-    template_name = "mail-login/login_failed.html"
+    template_name = "registration/login.html"
     form_class = LoginForm
 
     def form_valid(self, form):

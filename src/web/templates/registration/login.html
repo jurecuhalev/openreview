@@ -29,6 +29,10 @@
             </div>
 
             <span class="mt-2 text-sm text-gray-500 font-normal" id="email-description">We'll send you a login link to your email.</span>
+
+            <div class="mt-8 text-sm text-red-600">
+                {{ form.non_field_errors }}
+            </div>
         </div>
     </form>
 {% endblock %}
