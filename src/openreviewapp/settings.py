@@ -91,7 +91,7 @@ STATIC_URL = "/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-DJANGO_VITE_ASSETS_PATH = Path.joinpath(BASE_DIR, "frontend/static/frontend/dist/")
+DJANGO_VITE_ASSETS_PATH = Path.joinpath(BASE_DIR, "frontend/dist/")
 STATIC_ROOT = "collectedstatic"
 STATICFILES_DIRS = [DJANGO_VITE_ASSETS_PATH]
 DJANGO_VITE_DEV_MODE = False
