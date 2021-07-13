@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         for row in data:
             if row[0]:
-                email = row[0].lower()
+                email = row[0].lower().strip()
                 first_name = row[2]
                 last_name = row[1]
 
