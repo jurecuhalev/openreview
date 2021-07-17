@@ -35,7 +35,9 @@ class EntryListView(LoginRequiredMixin, ListView):
     context_object_name = "entry_list"
 
     def get_queryset(self):
-        return Entry.objects.filter(project__pk=self.kwargs["project"])
+        return Entry.objects.filter(project__pk=self.kwargs["project"]).order_by(
+            "title"
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -45,11 +47,11 @@ class EntryListView(LoginRequiredMixin, ListView):
                 "Waiting for review": self.get_queryset()
                 .exclude(ratinganswer__user=self.request.user)
                 .distinct()
-                .order_by("key"),
+                .order_by("title"),
                 "Completed reviews": self.get_queryset()
                 .filter(ratinganswer__user=self.request.user)
                 .distinct()
-                .order_by("key"),
+                .order_by("title"),
             }
 
             context["ratings_by_status"] = rating_status

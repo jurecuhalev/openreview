@@ -50,10 +50,7 @@ class Entry(models.Model):
         verbose_name_plural = "Entries"
 
     def __str__(self):
-        if self.key:
-            return "#{} - {}".format(self.key, self.title)
-        else:
-            return self.title
+        return self.title
 
     def ratings(self):
         reviewers_rated = self.ratinganswer_set.values("user").distinct().count()
