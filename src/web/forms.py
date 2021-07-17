@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from icecream import ic
 
-from .models import SiteSettings, RatingAnswer
+from .models import SiteSettings, RatingAnswer, RatingQuestion, Rating
 from django_svg_image_form_field import SvgAndImageFormField
 
 ONE_TO_TEN_CHOICES = [(str(i), str(i)) for i in range(1, 11)]
@@ -50,6 +50,24 @@ class RatingForm(forms.Form):
 
             self.fields[field_id] = field
             self.initial[field_id] = initial_value
+
+    def save(self, user, entry):
+        data = self.cleaned_data
+
+        rating, is_created = Rating.objects.get_or_create(user=user, entry=entry)
+        rating.answers.clear()
+        for key, value in data.items():
+            key = RatingQuestion.objects.get(pk=key)
+            answer, is_created = RatingAnswer.objects.get_or_create(
+                user=user,
+                entry=entry,
+                question=key,
+            )
+            answer.value = value
+            answer.save()
+            rating.answers.add(answer)
+
+        return rating
 
 
 class LoginForm(forms.Form):

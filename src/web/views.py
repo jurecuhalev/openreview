@@ -126,15 +126,7 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
             return self.form_invalid(form)
 
     def form_valid(self, form):
-        data = form.cleaned_data
-        for key, value in data.items():
-            answer, is_created = RatingAnswer.objects.get_or_create(
-                user=self.request.user,
-                entry=self.get_object(),
-                question=RatingQuestion.objects.get(pk=key),
-            )
-            answer.value = value
-            answer.save()
+        form.save(user=self.request.user, entry=self.get_object())
 
         return super().form_valid(form)
 

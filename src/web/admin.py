@@ -10,6 +10,7 @@ from web.models import (
     RatingQuestion,
     RatingAnswer,
     SiteSettings,
+    Rating,
 )
 
 from web.forms import SiteSettingsForm
@@ -48,6 +49,11 @@ class RatingQuestionAdmin(admin.ModelAdmin):
 @admin.register(RatingAnswer)
 class RatingAnswerAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(Rating)
+class Rating(admin.ModelAdmin):
+    list_display = ("pk", "entry", "user")
 
 
 @admin.register(SiteSettings)
