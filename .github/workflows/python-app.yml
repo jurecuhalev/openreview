@@ -50,5 +50,3 @@ jobs:
       run: |
         pytest
       working-directory: ./src
-      env:
-        DJANGO_SETTINGS_MODULE: openreviewapp.testsettings
