@@ -14,3 +14,5 @@ DATABASES = {
         "autocommit": True,
     }
 }
+
+SECRET_KEY = "django-insecure-bwr8c@lu$d*l)7538h$43jj78r0r8+^#tufa496-xykap@5)o9"
