@@ -48,4 +48,6 @@ jobs:
       run: python src/manage.py migrate
     - name: Test with pytest
       run: |
-        DJANGO_SETTINGS_MODULE = openreviewapp.testsettings pytest src
+        pytest src
+        env:
+          DJANGO_SETTINGS_MODULE: openreviewapp.testsettings
