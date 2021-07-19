@@ -9,8 +9,8 @@ DATABASES = {
         "NAME": "github_actions",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "",  # Set to empty string for localhost
-        "PORT": "",  # Set to empty string for default
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
         "autocommit": True,
     }
 }
