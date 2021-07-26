@@ -63,6 +63,12 @@ class Entry(models.Model):
     def __str__(self):
         return self.title
 
+    def get_admin_url(self):
+        return reverse_lazy(
+            "admin:%s_%s_change" % (self._meta.app_label, self._meta.model_name),
+            args=[self.id],
+        )
+
     def ratings(self):
         reviewers_rated = self.ratinganswer_set.values("user").distinct().count()
         reviewers_total = self.project.userprofile_set.count()

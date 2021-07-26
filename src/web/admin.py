@@ -38,6 +38,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
+    list_filter = ("is_active",)
     pass
 
 
