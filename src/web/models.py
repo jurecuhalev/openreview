@@ -36,14 +36,25 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
+class ActiveEntriesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True)
+
+
 class Entry(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     title = models.TextField()
     key = models.CharField(null=True, blank=True, max_length=120)
 
-    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        Category, blank=True, null=True, on_delete=models.CASCADE
+    )
 
     data = models.JSONField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active = ActiveEntriesManager()
 
     class Meta:
         verbose_name = "Entry"
