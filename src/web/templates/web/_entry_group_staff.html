@@ -1,17 +1,25 @@
-    <li>
-      <a href="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}" class="block hover:bg-gray-50">
+<li>
+    <a href="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}" class="block hover:bg-gray-50">
         <div class="px-4 py-4 sm:px-6">
-          <div class="flex items-center justify-between">
-            <p class="text-sm font-medium text-indigo-600 truncate">
-                {# <span class="text-gray-500">#{{ entry.key }}</span> #}
-                {{ entry.title }}
-            </p>
-            <div class="ml-2 flex-shrink-0 flex">
-              <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                Reviews: {{ entry.ratings.reviewers_rated }} / {{ entry.ratings.reviewers_total }}
-              </p>
+            <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-indigo-600 truncate">
+                    {# <span class="text-gray-500">#{{ entry.key }}</span> #}
+                    {{ entry.title }}
+                </p>
+                <div class="ml-2 flex-shrink-0 flex">
+                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                {% if entry.ratings.reviewers_rated >= entry.ratings.reviewers_total %}
+                    bg-green-100 text-green-800
+                {% elif entry.ratings.reviewers_rated %}
+                    bg-blue-100 text-green-800
+                {% else %}
+                    bg-gray-100 text-black
+                {% endif %}
+                ">
+                        Reviews: {{ entry.ratings.reviewers_rated }} / {{ entry.ratings.reviewers_total }}
+                    </p>
+                </div>
             </div>
-          </div>
         </div>
-      </a>
-    </li>
+    </a>
+</li>

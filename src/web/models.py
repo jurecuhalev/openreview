@@ -78,8 +78,8 @@ class Entry(models.Model):
         )
 
     def ratings(self):
-        reviewers_rated = self.ratinganswer_set.values("user").distinct().count()
-        reviewers_total = self.project.userprofile_set.count()
+        reviewers_rated = self.rating_set.count()
+        reviewers_total = self.reviewers.count()
 
         return {"reviewers_rated": reviewers_rated, "reviewers_total": reviewers_total}
 
