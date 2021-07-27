@@ -39,17 +39,24 @@ class EntryListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
 
         if not self.request.user.is_staff:
+            reviewer_on = (
+                self.get_queryset()
+                .filter(reviewers=user)
+                .exclude(ratinganswer__user=user)
+            )
+
             rating_status = {
-                "Waiting for review": self.get_queryset()
-                .exclude(ratinganswer__user=self.request.user)
+                "Assigned to you for review": reviewer_on,
+                "Optional entries for review": self.get_queryset()
                 .distinct()
-                .order_by("title"),
+                .exclude(pk__in=reviewer_on)
+                .exclude(ratinganswer__user=user),
                 "Completed reviews": self.get_queryset()
-                .filter(ratinganswer__user=self.request.user)
-                .distinct()
-                .order_by("title"),
+                .filter(ratinganswer__user=user)
+                .distinct(),
             }
 
             context["ratings_by_status"] = rating_status

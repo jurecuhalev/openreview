@@ -52,6 +52,7 @@ class Entry(models.Model):
 
     data = models.JSONField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
+    reviewers = models.ManyToManyField(User)
 
     objects = models.Manager()
     active = ActiveEntriesManager()
@@ -59,6 +60,7 @@ class Entry(models.Model):
     class Meta:
         verbose_name = "Entry"
         verbose_name_plural = "Entries"
+        ordering = ["title", "key"]
 
     def __str__(self):
         return self.title
