@@ -1,6 +1,8 @@
 from django.core.management import BaseCommand
 import random
 
+from icecream import ic
+
 from web.models import Entry, Project
 
 
@@ -42,19 +44,21 @@ class Command(BaseCommand):
         self.stdout.write("Reviewers: {}".format(reviewers_count))
         self.stdout.write("Entries: {}".format(entries_count))
 
+        for entry in entries:
+            entry.reviewers.clear()
+
         entries_list_remove = entries_list[:]
         for reviewer in reviewers:
-            if len(entries_list_remove) < amount:
-                for entry_id in entries_list_remove:
-                    Entry.objects.get(pk=entry_id).reviewers.add(reviewer.user)
+            selected_count = 0
+            while selected_count < amount:
+                random_entry_id = random.choice(entries_list_remove)
+                random_entry = Entry.objects.get(pk=random_entry_id)
 
-                entries_list_remove = entries_list[:]
-                entries_sample = random.sample(
-                    entries_list_remove, amount - len(entries_list_remove)
-                )
-            else:
-                entries_sample = random.sample(entries_list_remove, amount)
+                if reviewer not in random_entry.reviewers.all():
+                    ic(reviewer)
+                    random_entry.reviewers.add(reviewer.user)
+                    entries_list_remove.remove(random_entry_id)
+                    selected_count += 1
 
-            for entry_id in entries_sample:
-                Entry.objects.get(pk=entry_id).reviewers.add(reviewer.user)
-                entries_list_remove.remove(entry_id)
+                if not entries_list_remove:
+                    entries_list_remove = entries_list[:]
