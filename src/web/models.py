@@ -23,6 +23,12 @@ class UserProfile(models.Model):
     projects = models.ManyToManyField(Project)
     is_active = models.BooleanField(default=True)
 
+    def full_name(self):
+        if self.user.first_name and self.user.last_name:
+            return "{} {}".format(self.user.first_name, self.user.last_name)
+
+        return self.user.username
+
 
 class Category(models.Model):
     name = models.CharField(max_length=120)

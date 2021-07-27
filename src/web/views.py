@@ -115,7 +115,15 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
                 .annotate(Count("user"))
                 .order_by("user", "question__order")
             )
-            context["ratings"] = {"questions": questions, "answers": answers}
+            users_that_reviewed = entry.rating_set.all().values_list("user", flat=True)
+
+            users_not_reviewed_yet = entry.reviewers.exclude(pk__in=users_that_reviewed)
+
+            context["ratings"] = {
+                "questions": questions,
+                "answers": answers,
+            }
+            context["waiting_for_users"] = users_not_reviewed_yet
 
         return context
 

@@ -84,6 +84,19 @@
                 </li>
             {% endfor %}
         </ul>
+
+        {% if waiting_for_users %}
+            <header class="mb-6">
+                <h2 class="text-xl font-bold leading-tight text-gray-900 max-w-6xl">
+                    Waiting for review
+                </h2>
+            </header>
+            <ul>
+                {% for user in waiting_for_users %}
+                    <li class="inline-block">{{ user.userprofile.full_name }}{% if not forloop.last %}, {% endif %}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% else %}
         <header>
             <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">
