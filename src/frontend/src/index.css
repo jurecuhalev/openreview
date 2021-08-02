@@ -11,3 +11,11 @@ body {
     background: yellow;
   }
 }
+
+.form-radio li {
+  @apply inline-flex;
+}
+
+.helptext {
+  @apply flex mt-2;
+}

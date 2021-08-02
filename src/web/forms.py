@@ -39,6 +39,7 @@ class RatingForm(forms.Form):
                     label=question.title,
                     widget=forms.RadioSelect(attrs={"class": "form-radio"}),
                     choices=ONE_TO_TEN_CHOICES,
+                    help_text=question.description,
                 )
             else:
                 field = forms.CharField(label=question.title, widget=forms.Textarea)
