@@ -12,3 +12,4 @@ django-vite==1.1.0
 django-braces==1.14.0
 pytest-django==4.4.0
 factory-boy==3.2.0
+django-su==0.9.0

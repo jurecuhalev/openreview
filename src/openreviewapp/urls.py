@@ -27,5 +27,6 @@ urlpatterns = [
     path("login/<str:key>/", LoginKeyCheckView.as_view(), name="login-key-check"),
     path("login/", LoginKeyCheckView.as_view(), name="login-key-check"),
     path("admin/", admin.site.urls),
+    path("su/", include("django_su.urls")),
     path("", IndexView.as_view(), name="index"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
