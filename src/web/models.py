@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
+from django.conf import settings
 
 
 class Project(models.Model):
@@ -155,15 +156,15 @@ class LoginKey(models.Model):
         super(LoginKey, self).save(*args, **kwargs)
 
     def send_email(self):
-        settings = SiteSettings.objects.latest("pk")
+        site_settings = SiteSettings.objects.latest("pk")
         body = render_to_string(
             "mail-login/mail_body.txt",
-            {"url": self.get_absolute_url(), "email": settings.email},
+            {"url": self.get_absolute_url(), "email": site_settings.email},
         )
         send_mail(
-            "{} login information".format(settings.name),
+            "{} login information".format(site_settings.name),
             body,
-            settings.email,
+            settings.DEFAULT_FROM_EMAIL,
             [self.email],
         )
 
