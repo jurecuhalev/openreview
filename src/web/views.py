@@ -6,8 +6,6 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 import datetime
 from django.utils import timezone
-
-from django.views import View
 from icecream import ic
 
 from django.views.generic import ListView, DetailView, TemplateView
