@@ -19,8 +19,8 @@
                     <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                         <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
                         <a href="/"
-                           class="tab {% current_tab_class current_tab 'index' %}
-                           aria-current=" page">Overview</a>
+                           class="tab {% current_tab_class current_tab 'index' %}"
+                           aria-current="page">Overview</a>
 
                         {% if current_project %}
                             <a href="{% url 'entry-list' project=current_project.pk %}"
