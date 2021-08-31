@@ -67,9 +67,11 @@
                 </div>
 
             {% endif %}
+            {% if request.user.is_authenticated %}
             <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                 <a class="tab" href="/accounts/logout/?next=/">Logout</a>
             </div>
+            {% endif %}
         </div>
     </div>
 
