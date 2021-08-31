@@ -6,12 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0016_entry_reviewers'),
+        ("web", "0016_entry_reviewers"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='entry',
-            options={'ordering': ['title', 'key'], 'verbose_name': 'Entry', 'verbose_name_plural': 'Entries'},
+            name="entry",
+            options={
+                "ordering": ["title", "key"],
+                "verbose_name": "Entry",
+                "verbose_name_plural": "Entries",
+            },
         ),
     ]
