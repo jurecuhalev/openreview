@@ -4,7 +4,7 @@
     </h2>
 </header>
 
-<ul class="mt-4 js-reviewers reviewers-list max-w-5xl grid grid-cols-3" id="reviewers" x-data="{}">
+<ul class="mt-4 js-reviewers reviewers-list max-w-5xl md:col-count-2 lg:col-count-3 col-fill-balance" id="reviewers" x-data="{}">
     {% for reviewer in reviewers %}
         <li
                 x-data="{
