@@ -96,6 +96,9 @@
                 {% endfor %}
             </ul>
         {% endif %}
+
+
+        {% include "web/_reviewer_assign_list.html" with reviewers=entry.get_reviewers  %}
     {% else %}
         <header>
             <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">

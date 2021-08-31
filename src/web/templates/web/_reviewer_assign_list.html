@@ -1,0 +1,23 @@
+<header class="my-6">
+    <h2 class="text-xl font-bold leading-tight text-gray-900 max-w-6xl">
+        Assign Reviewers
+    </h2>
+</header>
+
+<ul class="mt-4 js-reviewers reviewers-list max-w-5xl grid grid-cols-3" id="reviewers" x-data="{}">
+    {% for reviewer in reviewers %}
+        <li
+                x-data="{
+                    isAssigned: {{ reviewer.assigned|lower }},
+                    toggleUrl: '{% url 'entry-assign-reviewer' project=entry.project.pk pk=entry.pk user=reviewer.user.pk %}'
+{#                    csrf: '{% csrf_token %}'#}
+                }"
+                x-on:click="toggleReviewer"
+                class="inline-block mr-4 w-full py-1 pl-2"
+                :class="isAssigned === true ? 'font-bold cursor-pointer hover:text-blue-400' : 'underline cursor-pointer hover:text-blue-400 hover:bg-gray-100'"
+        >
+            {{ reviewer.user.first_name }} {{ reviewer.user.last_name }}
+            ({{ reviewer.user.rating_set.all.count }})
+        </li>
+    {% endfor %}
+</ul>

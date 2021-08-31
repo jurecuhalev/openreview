@@ -1,10 +1,19 @@
 import './style.css'
 import './index.css'
+import Cookies from 'js-cookie'
 
-// @ts-ignore
-// const app = document.querySelector<HTMLDivElement>('#app')!
-//
-// app.innerHTML = `
-//   <h1>Hello Vite!</h1>
-//   <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
-// `
+async function toggleReviewer() {
+    const csrftoken = Cookies.get('csrftoken');
+    // fetch('/')
+    // this.assigned = ! this.assigned;
+    await fetch(this.toggleUrl, {
+        method: 'POST',
+        headers: { "X-CSRFToken": csrftoken }
+    }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            this.isAssigned = data.isAssigned;
+        })
+}
+
+window.toggleReviewer = toggleReviewer;

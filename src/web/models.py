@@ -84,6 +84,14 @@ class Entry(models.Model):
 
         return {"reviewers_rated": reviewers_rated, "reviewers_total": reviewers_total}
 
+    def get_reviewers(self):
+        reviewers = []
+        for user in User.objects.filter(is_staff=False).order_by("last_name"):
+            reviewers.append(
+                {"user": user, "assigned": self.reviewers.filter(pk=user.pk).exists()}
+            )
+        return reviewers
+
 
 QUESTION_SCALES = (
     ("1-10", "1 to 10"),

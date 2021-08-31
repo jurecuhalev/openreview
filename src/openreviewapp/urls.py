@@ -9,6 +9,7 @@ from web.views import (
     IndexView,
     LoginKeyCheckView,
     ReviewerListView,
+    EntryAssignReviewer,
 )
 
 urlpatterns = [
@@ -16,6 +17,11 @@ urlpatterns = [
         "project/<int:project>/entry/<int:pk>",
         EntryDetailView.as_view(),
         name="entry-detail",
+    ),
+    path(
+        "project/<int:project>/entry/<int:pk>/assign/<int:user>",
+        EntryAssignReviewer.as_view(),
+        name="entry-assign-reviewer",
     ),
     path("project/<int:project>/entry/", EntryListView.as_view(), name="entry-list"),
     path(

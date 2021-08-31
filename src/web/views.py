@@ -1,11 +1,15 @@
+import json
+
 from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 import datetime
 from django.utils import timezone
+from django.views import View
 from icecream import ic
 
 from django.views.generic import ListView, DetailView, TemplateView
@@ -213,7 +217,7 @@ class ReviewerListView(StaffuserRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get("project"))
 
-        user_profiles = project.userprofile_set.all()
+        user_profiles = project.userprofile_set.all().order_by("user__last_name")
         reviewer_list = []
 
         for user_profile in user_profiles:
@@ -225,3 +229,18 @@ class ReviewerListView(StaffuserRequiredMixin, TemplateView):
         context["reviewer_list"] = reviewer_list
 
         return context
+
+
+class EntryAssignReviewer(StaffuserRequiredMixin, View):
+    def post(self, request, pk, user, *args, **kwargs):
+        user = User.objects.get(pk=user)
+        entry = Entry.objects.get(pk=pk)
+
+        if entry.reviewers.filter(pk=user.pk).exists():
+            entry.reviewers.remove(user)
+            resp = {"isAssigned": False}
+        else:
+            entry.reviewers.add(user)
+            resp = {"isAssigned": True}
+
+        return HttpResponse(json.dumps(resp))
