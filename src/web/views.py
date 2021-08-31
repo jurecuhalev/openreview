@@ -5,6 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 import datetime
+from django.utils import timezone
 
 from django.views import View
 from icecream import ic
@@ -191,7 +192,7 @@ class LoginKeyCheckView(FormView):
         except KeyError:
             return redirect(reverse_lazy("index"))
 
-        today = datetime.datetime.today()
+        today = timezone.now()
         if LoginKey.objects.filter(
             key=key, pub_date__gte=(today - datetime.timedelta(days=7))
         ).exists():
