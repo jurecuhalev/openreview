@@ -17,7 +17,7 @@
                 :class="isAssigned === true ? 'font-bold cursor-pointer hover:text-blue-400' : 'underline cursor-pointer hover:text-blue-400 hover:bg-gray-100'"
         >
             {{ reviewer.user.first_name }} {{ reviewer.user.last_name }}
-            ({{ reviewer.user.rating_set.all.count }})
+            {#            ({{ reviewer.user.rating_set.all.count }})#}
         </li>
     {% endfor %}
 </ul>
