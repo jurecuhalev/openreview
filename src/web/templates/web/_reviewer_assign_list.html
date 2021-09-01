@@ -10,7 +10,6 @@
                 x-data="{
                     isAssigned: {{ reviewer.assigned|lower }},
                     toggleUrl: '{% url 'entry-assign-reviewer' project=entry.project.pk pk=entry.pk user=reviewer.user.pk %}'
-{#                    csrf: '{% csrf_token %}'#}
                 }"
                 x-on:click="toggleReviewer"
                 class="inline-block mr-4 w-full py-1 pl-2"
