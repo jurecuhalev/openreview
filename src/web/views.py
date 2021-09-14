@@ -221,10 +221,18 @@ class ReviewerListView(StaffuserRequiredMixin, TemplateView):
         reviewer_list = []
 
         for user_profile in user_profiles:
-            count = (
+            count_done = (
                 user_profile.user.ratinganswer_set.values("entry").distinct().count()
             )
-            reviewer_list.append({"user": user_profile.user, "count": count})
+            count_total = user_profile.user.entry_set.all().count()
+
+            reviewer_list.append(
+                {
+                    "user": user_profile.user,
+                    "count_total": count_total,
+                    "count_done": count_done,
+                }
+            )
 
         context["reviewer_list"] = reviewer_list
 
