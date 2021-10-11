@@ -49,7 +49,8 @@ class RatingQuestionAdmin(admin.ModelAdmin):
 
 @admin.register(RatingAnswer)
 class RatingAnswerAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["pk", "user", "question", "entry"]
+    list_filter = ["user"]
 
 
 @admin.register(Rating)

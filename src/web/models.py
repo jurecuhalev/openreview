@@ -112,6 +112,9 @@ class RatingQuestion(models.Model):
     order = models.IntegerField()
     changed = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.project} / {self.title}"
+
 
 class RatingAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -120,6 +123,9 @@ class RatingAnswer(models.Model):
 
     value = models.TextField(blank=True, null=True)
     is_na = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.entry.title}"
 
 
 class Rating(models.Model):
