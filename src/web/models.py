@@ -59,7 +59,7 @@ class Entry(models.Model):
 
     data = models.JSONField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
-    reviewers = models.ManyToManyField(User)
+    reviewers = models.ManyToManyField(User, blank=True)
 
     objects = models.Manager()
     active = ActiveEntriesManager()
