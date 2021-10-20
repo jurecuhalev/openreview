@@ -8,13 +8,13 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('web', '0017_alter_entry_options'),
+        ("web", "0017_alter_entry_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='entry',
-            name='reviewers',
+            model_name="entry",
+            name="reviewers",
             field=models.ManyToManyField(blank=True, to=settings.AUTH_USER_MODEL),
         ),
     ]

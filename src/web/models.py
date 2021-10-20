@@ -72,6 +72,12 @@ class Entry(models.Model):
     def __str__(self):
         return self.title
 
+    def get_full_url(self):
+        site_settings = SiteSettings.objects.latest("pk")
+        return site_settings.url + reverse_lazy(
+            "entry-detail", kwargs={"project": self.project.pk, "pk": self.pk}
+        )
+
     def get_admin_url(self):
         return reverse_lazy(
             "admin:%s_%s_change" % (self._meta.app_label, self._meta.model_name),
@@ -183,5 +189,7 @@ class LoginKey(models.Model):
         )
 
     def get_absolute_url(self):
-        settings = SiteSettings.objects.latest("pk")
-        return settings.url + reverse_lazy("login-key-check", kwargs={"key": self.key})
+        site_settings = SiteSettings.objects.latest("pk")
+        return site_settings.url + reverse_lazy(
+            "login-key-check", kwargs={"key": self.key}
+        )

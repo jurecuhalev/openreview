@@ -1,4 +1,9 @@
 import json
+import pandas as pd
+from styleframe import StyleFrame, Styler
+import datetime
+from io import BytesIO
+from icecream import ic
 
 from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
@@ -7,10 +12,11 @@ from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
-import datetime
+
 from django.utils import timezone
 from django.views import View
-from icecream import ic
+from django.http import HttpResponse
+
 
 from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib import messages
@@ -20,6 +26,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.html import format_html
 
+from web.export import get_df_reviewers, get_df_entries, get_df_ratings
 from web.forms import RatingForm, LoginForm
 from web.models import Entry, RatingQuestion, RatingAnswer, LoginKey, Project
 from web.submissions_processing import merge_fields_with_submission_data
@@ -252,3 +259,61 @@ class EntryAssignReviewer(StaffuserRequiredMixin, View):
             resp = {"isAssigned": True}
 
         return HttpResponse(json.dumps(resp))
+
+
+class ProjectExportView(StaffuserRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+        df_reviewers = get_df_reviewers(project_pk=pk)
+        df_entries = get_df_entries(project_pk=pk)
+        df_ratings = get_df_ratings(project_pk=pk)
+
+        styler = Styler(horizontal_alignment="general")
+        styler_ratings = Styler(horizontal_alignment="general", wrap_text=True)
+
+        # Workaround for Excel interpreting some strings as formulas
+        # https://stackoverflow.com/a/54095887/141200
+        options = {"strings_to_formulas": False, "strings_to_urls": False}
+
+        with BytesIO() as b:
+            writer = StyleFrame.ExcelWriter(b, options=options)
+            sf = StyleFrame(df_reviewers, styler_obj=styler)
+            sf.to_excel(
+                excel_writer=writer,
+                sheet_name="Reviewers",
+                best_fit=df_reviewers.columns.to_list(),
+                index=False,
+            )
+
+            sf = StyleFrame(df_entries, styler_obj=styler)
+            sf.to_excel(
+                excel_writer=writer,
+                sheet_name="Entries",
+                best_fit=df_entries.columns.to_list(),
+                index=False,
+            )
+
+            sf = StyleFrame(df_ratings, styler_obj=styler_ratings)
+            sf.apply_column_style(
+                cols_to_style=df_ratings.columns[
+                    df_ratings.columns.str.endswith("remarks")
+                ].to_list(),
+                width=100,
+                styler_obj=styler_ratings,
+            )
+            sf.to_excel(
+                excel_writer=writer,
+                sheet_name="Reviews",
+                best_fit=df_ratings.columns[
+                    ~df_ratings.columns.str.endswith("remarks")
+                ].to_list(),
+                index=False,
+            )
+            writer.close()
+
+            filename = "export.xlsx"
+            response = HttpResponse(
+                b.getvalue(),
+                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            response["Content-Disposition"] = "attachment; filename=%s" % filename
+            return response
