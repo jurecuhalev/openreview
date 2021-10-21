@@ -292,6 +292,7 @@ class ProjectExportView(StaffuserRequiredMixin, View):
                 index=False,
             )
 
+            # FIXME: This should be a lookup into database for 'textarea' type of question
             sf = StyleFrame(df_ratings, styler_obj=styler_ratings)
             sf.apply_column_style(
                 cols_to_style=df_ratings.columns[
