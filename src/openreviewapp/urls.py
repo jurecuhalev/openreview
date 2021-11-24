@@ -9,6 +9,7 @@ from web.views import (
     IndexView,
     LoginKeyCheckView,
     ReviewerListView,
+    ReviewerDetailView,
     EntryAssignReviewer,
     ProjectExportView,
 )
@@ -34,6 +35,11 @@ urlpatterns = [
         "project/<int:project>/reviewer/",
         ReviewerListView.as_view(),
         name="reviewer-list",
+    ),
+    path(
+        "project/<int:project>/reviewer/<int:pk>/",
+        ReviewerDetailView.as_view(),
+        name="reviewer-detail",
     ),
     path("accounts/", include("django.contrib.auth.urls")),
     path("login/<str:key>/", LoginKeyCheckView.as_view(), name="login-key-check"),

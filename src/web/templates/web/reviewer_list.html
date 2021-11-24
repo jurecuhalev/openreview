@@ -6,7 +6,7 @@
     <div class="bg-white shadow overflow-hidden sm:rounded-md mt-6">
         <ul>
             {% for reviewer in reviewer_list %}
-                {% include "web/_reviewer_card.html" with user=reviewer.user count_done=reviewer.count_done count_total=reviewer.count_total %}
+                {% include "web/_reviewer_card.html" with user=reviewer.user count_done=reviewer.count_done count_total=reviewer.count_total project=current_project %}
             {% endfor %}
         </ul>
     </div>

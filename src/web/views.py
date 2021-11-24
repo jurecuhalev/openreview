@@ -217,6 +217,41 @@ class LoginKeyCheckView(FormView):
         return redirect(reverse_lazy("index"))
 
 
+class ReviewerDetailView(StaffuserRequiredMixin, DetailView):
+    template_name = "web/reviewer_detail.html"
+    model = User
+
+    def get_queryset(self, *args, **kwargs):
+        project = Project.objects.get(pk=self.kwargs.get("project"))
+        return project.userprofile_set.all()
+
+    def get_object(self, queryset=None):
+        return self.get_queryset().get(user__pk=self.kwargs.get("pk"))
+
+    def get_context_object_name(self, obj):
+        return "reviewer"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        entries = Entry.active.filter(project__pk=self.kwargs["project"]).order_by(
+            "title"
+        )
+        user = self.get_object().user
+
+        reviewer_on = entries.filter(reviewers=user).exclude(rating__user=user)
+        ic(entries.filter(reviewers=user))
+
+        rating_status = {
+            "Waiting for review": reviewer_on,
+            "Completed reviews": entries.filter(reviewers=user).distinct(),
+        }
+
+        context["ratings_by_status"] = rating_status
+
+        return context
+
+
 class ReviewerListView(StaffuserRequiredMixin, TemplateView):
     template_name = "web/reviewer_list.html"
 

@@ -6,11 +6,14 @@
         <div class="px-4 py-4 sm:px-6">
             <div class="flex items-center justify-between">
                 <div class="text-base leading-loose font-medium text-blue-400 truncate">
-                    {% if user.first_name %}
-                        {{ user.first_name }} {{ user.last_name }}
+                    {{ user.pk }}
+                    <a href="{% url 'reviewer-detail' project=project.pk pk=user.pk %}">
+                    {% if user.get_full_name %}
+                        {{ user.get_full_name }}
                     {% else %}
                         {{ user.username }}
                     {% endif %}
+                    </a>
                 </div>
             </div>
             <div class="mt-2 sm:flex sm:justify-between">
