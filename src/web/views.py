@@ -1,5 +1,4 @@
 import json
-import pandas as pd
 from styleframe import StyleFrame, Styler
 import datetime
 from io import BytesIO
@@ -7,7 +6,6 @@ from icecream import ic
 
 from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
