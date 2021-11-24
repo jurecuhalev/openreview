@@ -239,12 +239,12 @@ class ReviewerDetailView(StaffuserRequiredMixin, DetailView):
         )
         user = self.get_object().user
 
-        reviewer_on = entries.filter(reviewers=user).exclude(rating__user=user)
-        ic(entries.filter(reviewers=user))
+        waiting_reviews = entries.filter(reviewers=user).exclude(rating__user=user)
+        completed_reviews = entries.filter(reviewers=user).filter(rating__user=user)
 
         rating_status = {
-            "Waiting for review": reviewer_on,
-            "Completed reviews": entries.filter(reviewers=user).distinct(),
+            "Waiting for review": waiting_reviews,
+            "Completed reviews": completed_reviews,
         }
 
         context["ratings_by_status"] = rating_status
