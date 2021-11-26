@@ -1,7 +1,9 @@
 from icecream import ic
 
 
-def merge_fields_with_submission_data(fields: list, data: dict) -> list:
+def merge_fields_with_submission_data(
+    fields: list, data: dict, excluded_labels=[]
+) -> list:
     results = []
     for field in fields:
         if field.get("inputs"):
@@ -20,14 +22,16 @@ def merge_fields_with_submission_data(fields: list, data: dict) -> list:
             label = field.get("label")
             _type = field.get("type")
 
-            results.append({"label": label, "type": _type, "inputs": input_fields})
+            if label not in excluded_labels:
+                results.append({"label": label, "type": _type, "inputs": input_fields})
         else:
             label = field.get("label")
             field_id = str(field.get("id"))
             value = data.get(field_id, "")
             _type = field.get("type")
 
-            if _type == "section" or value:
-                results.append({"label": label, "value": value, "type": _type})
+            if label not in excluded_labels:
+                if _type == "section" or value:
+                    results.append({"label": label, "value": value, "type": _type})
 
     return results

@@ -1,0 +1,29 @@
+{% for line in submission_data %}
+    {% if line.inputs %}
+        <h2 class="label">{{ line.label }}</h2>
+        {% if line.type == 'address' %}
+            <p class="type-{{ iline.type }} mr-2">
+                {% for iline in line.inputs %}
+                    {{ iline.value }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </p>
+        {% else %}
+            <div class="{% if not line.type == 'checkbox' %}flex{% endif %} h-auto">
+                {% for iline in line.inputs %}
+                    {% if line.type != 'name' and line.type != 'checkbox' %}
+                        <h2 class="type-{{ iline.type }} font-bold">{{ iline.label }}</h2>
+                    {% endif %}
+
+                    <span class="type-{{ iline.type }} mr-2">{{ iline.value|urlize|linebreaksbr }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        {% if line.type == 'section' %}
+            <h2 class="section-title">{{ line.label }}</h2>
+        {% else %}
+            <h2 class="type-{{ line.type }} font-bold mt-4 mb-2">{{ line.label }}</h2>
+            <p class="type-{{ line.type }} mb-6">{{ line.value|urlize|linebreaksbr }}</p>
+        {% endif %}
+    {% endif %}
+{% endfor %}
