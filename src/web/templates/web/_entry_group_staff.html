@@ -7,19 +7,25 @@
                     {{ entry.title }}
                 </p>
                 <div class="ml-2 flex-shrink-0 flex">
-                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                {% if entry.ratings.reviewers_rated >= entry.ratings.reviewers_total %}
-                    bg-green-100 text-green-800
-                {% elif entry.ratings.reviewers_rated %}
-                    bg-blue-100 text-green-800
-                {% else %}
-                    bg-gray-100 text-black
-                {% endif %}
-                ">
-                        Reviews: {{ entry.ratings.reviewers_rated }} / {{ entry.ratings.reviewers_total }}
-                    </p>
+                    <div class="flex flex-col gap-4 items-end">
+                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                    {% if entry.ratings.reviewers_rated >= entry.ratings.reviewers_total %}
+                        bg-green-100 text-green-800
+                    {% elif entry.ratings.reviewers_rated %}
+                        bg-blue-100 text-green-800
+                    {% else %}
+                        bg-gray-100 text-black
+                    {% endif %}
+                    ">
+                            Reviews: {{ entry.ratings.reviewers_rated }} / {{ entry.ratings.reviewers_total }}
+                        </p>
+                        <div class="text-sm gap-4 flex-row hidden lg:flex">
+                            {% for key, value in entry.get_average_ratings.items %}
+                                <span><b>{{ key }}</b>: {{ value }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
     </a>
 </li>

@@ -66,3 +66,28 @@ def get_df_ratings(project_pk: int) -> pd.DataFrame:
             ratings_data.append(data)
 
     return pd.DataFrame(ratings_data)
+
+
+def get_df_ratings_avg(project_pk: int) -> pd.DataFrame:
+    project = Project.objects.get(pk=project_pk)
+
+    entries = project.entry_set.filter(is_active=True)
+    ratings_data = []
+
+    for entry in entries:
+        scores = entry.get_average_ratings()
+        number_of_reviews = entry.ratings()["reviewers_rated"]
+
+        data = {
+            "Entry ID": entry.pk,
+            "Title": entry.title,
+            "No. of reviews": number_of_reviews,
+        }
+        data.update(scores)
+
+        ratings_data.append(data)
+
+    df = pd.DataFrame(ratings_data)
+    df = df.sort_values("Total Avg", ascending=False)
+
+    return df

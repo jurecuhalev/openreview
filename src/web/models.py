@@ -1,3 +1,4 @@
+import statistics
 import uuid
 
 from django.db import models
@@ -97,6 +98,27 @@ class Entry(models.Model):
                 {"user": user, "assigned": self.reviewers.filter(pk=user.pk).exists()}
             )
         return reviewers
+
+    def get_average_ratings(self):
+        scores = {}
+        for rating in self.ratinganswer_set.filter(question__scale="1-10"):
+            title = rating.question.title
+            value = int(rating.value)
+            try:
+                scores[title].append(value)
+            except KeyError:
+                scores[title] = [value]
+
+        scores_avg = {}
+        total = []
+        for key, value in scores.items():
+            total += value
+            scores_avg[key] = round(statistics.mean(value), 2)
+
+        if total:
+            scores_avg["Total Avg"] = round(statistics.mean(total), 2)
+
+        return scores_avg
 
 
 QUESTION_SCALES = (

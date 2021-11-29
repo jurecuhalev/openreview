@@ -24,7 +24,12 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.html import format_html
 
-from web.export import get_df_reviewers, get_df_entries, get_df_ratings
+from web.export import (
+    get_df_reviewers,
+    get_df_entries,
+    get_df_ratings,
+    get_df_ratings_avg,
+)
 from web.forms import RatingForm, LoginForm
 from web.models import Entry, RatingQuestion, RatingAnswer, LoginKey, Project
 from web.submissions_processing import merge_fields_with_submission_data
@@ -299,6 +304,7 @@ class ProjectExportView(StaffuserRequiredMixin, View):
         df_reviewers = get_df_reviewers(project_pk=pk)
         df_entries = get_df_entries(project_pk=pk)
         df_ratings = get_df_ratings(project_pk=pk)
+        df_ratings_avg = get_df_ratings_avg(project_pk=pk)
 
         styler = Styler(horizontal_alignment="general")
         styler_ratings = Styler(horizontal_alignment="general", wrap_text=True)
@@ -340,6 +346,14 @@ class ProjectExportView(StaffuserRequiredMixin, View):
                 best_fit=df_ratings.columns[
                     ~df_ratings.columns.str.endswith("remarks")
                 ].to_list(),
+                index=False,
+            )
+
+            sf = StyleFrame(df_ratings_avg, styler_obj=styler)
+            sf.to_excel(
+                excel_writer=writer,
+                sheet_name="Reviews Avg Ratings",
+                best_fit=df_ratings_avg.columns.to_list(),
                 index=False,
             )
             writer.close()
