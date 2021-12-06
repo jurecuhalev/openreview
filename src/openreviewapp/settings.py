@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Application definition
 
 INSTALLED_APPS = [
-    "django_su",
+    # "django_su",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -83,7 +83,7 @@ USE_TZ = True
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "django_su.backends.SuBackend",
+    # "django_su.backends.SuBackend",
 ]
 
 # Static files (CSS, JavaScript, Images)

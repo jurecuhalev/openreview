@@ -120,6 +120,22 @@ class Entry(models.Model):
 
         return scores_avg
 
+    def get_word_score(self):
+        avg_ratings = self.get_average_ratings()
+        total = avg_ratings.get("Total Avg")
+
+        if not total:
+            return
+
+        if total >= 8.67 and self.pk != 51:
+            return "Outstanding"
+        elif total >= 8:
+            return "Excellent"
+        elif total >= 6:
+            return "Promising"
+        else:
+            return "Early stage"
+
 
 QUESTION_SCALES = (
     ("1-10", "1 to 10"),
