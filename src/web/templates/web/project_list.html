@@ -6,7 +6,7 @@
     <div class="max-w-full">
         <ul>
             {% for project in project_list %}
-                <li class="block">
+                <li class="block mb-4">
                     <div class="flex items-center justify-between">
                         <a class="underline" href="{% url 'entry-list' project=project.pk %}">{{ project.name }}</a>
                         {% if request.user.is_staff %}

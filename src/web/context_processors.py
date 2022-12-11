@@ -19,7 +19,7 @@ def logo_url(request):
 def current_project(request):
     kwargs = resolve(request.path_info).kwargs
     if kwargs.get("project"):
-        return {"current_project": Project.objects.get(pk=1)}
+        return {"current_project": Project.objects.get(pk=kwargs.get("project"))}
 
     return {}
 

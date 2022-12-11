@@ -267,9 +267,12 @@ class ReviewerListView(StaffuserRequiredMixin, TemplateView):
 
         for user_profile in user_profiles:
             count_done = (
-                user_profile.user.ratinganswer_set.values("entry").distinct().count()
+                user_profile.user.ratinganswer_set.filter(entry__project=project)
+                .values("entry")
+                .distinct()
+                .count()
             )
-            count_total = user_profile.user.entry_set.all().count()
+            count_total = user_profile.user.entry_set.filter(project=project).count()
 
             reviewer_list.append(
                 {
