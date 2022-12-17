@@ -93,7 +93,9 @@ class Entry(models.Model):
 
     def get_reviewers(self):
         reviewers = []
-        for user in User.objects.filter(is_staff=False).order_by("first_name"):
+        for user in User.objects.filter(
+            is_staff=False, userprofile__projects=self.project
+        ).order_by("first_name"):
             reviewers.append(
                 {"user": user, "assigned": self.reviewers.filter(pk=user.pk).exists()}
             )
