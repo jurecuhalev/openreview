@@ -24,6 +24,15 @@ class UserProfilelInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (UserProfilelInline,)
+    list_display = ["username", "first_name", "last_name", "is_staff", "get_projects"]
+    list_filter = [
+        "is_staff",
+        "userprofile__projects",
+    ]
+
+    @admin.display(ordering="userprofile__projects", description="Projects")
+    def get_projects(self, obj):
+        return ", ".join([p.name for p in obj.userprofile.projects.all()])
 
 
 @admin.register(Project)
