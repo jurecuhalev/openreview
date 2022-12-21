@@ -1,5 +1,5 @@
 Django>=3.2,<3.3
-psycopg2==2.8.6
+psycopg2_binary
 requests==2.25.1
 icecream==2.1.0
 Pillow==8.3.0
