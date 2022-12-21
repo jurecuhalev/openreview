@@ -47,19 +47,23 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Entry)
 class EntryAdmin(admin.ModelAdmin):
-    list_filter = ("is_active",)
-    pass
+    list_filter = ("project", "is_active")
+    list_display = ("title", "project", "is_active")
 
 
 @admin.register(RatingQuestion)
 class RatingQuestionAdmin(admin.ModelAdmin):
     list_display = ["title", "project", "scale", "order"]
+    list_filter = ["project"]
 
 
 @admin.register(RatingAnswer)
 class RatingAnswerAdmin(admin.ModelAdmin):
-    list_display = ["pk", "user", "question", "entry"]
-    list_filter = ["user"]
+    list_display = ["pk", "user", "project", "question", "entry"]
+    list_filter = ["entry__project", "user"]
+
+    def project(self, obj):
+        return obj.entry.project
 
 
 @admin.register(Rating)
