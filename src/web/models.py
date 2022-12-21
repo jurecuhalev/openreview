@@ -119,6 +119,8 @@ class Entry(models.Model):
 
         if total:
             scores_avg["Total Avg"] = round(statistics.mean(total), 2)
+        else:
+            scores_avg["Total Avg"] = 0
 
         return scores_avg
 
@@ -127,7 +129,7 @@ class Entry(models.Model):
         total = avg_ratings.get("Total Avg")
 
         if not total:
-            return
+            return "N/A"
 
         if total >= 8.67 and self.pk != 51:
             return "Outstanding"
