@@ -48,7 +48,11 @@ class EntryListView(LoginRequiredMixin, ListView):
     context_object_name = "entry_list"
 
     def get_queryset(self):
-        return Entry.active.filter(project__pk=self.kwargs["project"]).order_by("title")
+        return (
+            Entry.active.filter(project__pk=self.kwargs["project"])
+            .order_by("title")
+            .prefetch_related("project")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
