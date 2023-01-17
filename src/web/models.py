@@ -105,7 +105,10 @@ class Entry(models.Model):
         scores = {}
         for rating in self.ratinganswer_set.filter(question__scale="1-10"):
             title = rating.question.title
-            value = int(rating.value)
+            try:
+                value = int(rating.value)
+            except ValueError:
+                continue
             try:
                 scores[title].append(value)
             except KeyError:
