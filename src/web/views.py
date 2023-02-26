@@ -2,6 +2,7 @@ import json
 from styleframe import StyleFrame, Styler
 import datetime
 from io import BytesIO
+from icecream import ic
 
 from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
@@ -28,6 +29,7 @@ from web.export import (
     get_df_entries,
     get_df_ratings,
     get_df_ratings_avg,
+    get_df_full_entries,
 )
 from web.forms import RatingForm, LoginForm
 from web.models import Entry, RatingQuestion, RatingAnswer, LoginKey, Project
@@ -312,6 +314,7 @@ class ProjectExportView(StaffuserRequiredMixin, View):
         df_entries = get_df_entries(project_pk=pk)
         df_ratings = get_df_ratings(project_pk=pk)
         df_ratings_avg = get_df_ratings_avg(project_pk=pk)
+        df_full_entries, limit_width_cols = get_df_full_entries(project_pk=pk)
 
         styler = Styler(horizontal_alignment="general")
         styler_ratings = Styler(horizontal_alignment="general", wrap_text=True)
@@ -363,6 +366,21 @@ class ProjectExportView(StaffuserRequiredMixin, View):
                 best_fit=df_ratings_avg.columns.to_list(),
                 index=False,
             )
+
+            sf = StyleFrame(df_full_entries, styler_obj=styler_ratings)
+            best_fit_cols = set(df_full_entries.columns.to_list()) - limit_width_cols
+            sf.apply_column_style(
+                cols_to_style=limit_width_cols,
+                width=200,
+                styler_obj=styler_ratings,
+            )
+            sf.to_excel(
+                excel_writer=writer,
+                sheet_name="Entries (detailed)",
+                best_fit=best_fit_cols,
+                index=False,
+            )
+
             writer.close()
 
             filename = "export.xlsx"

@@ -1,6 +1,8 @@
 import pandas as pd
+from icecream import ic
 
-from web.models import Project, RatingQuestion
+from web.models import Project
+from web.submissions_processing import merge_fields_with_submission_data
 
 
 def get_df_reviewers(project_pk: int) -> pd.DataFrame:
@@ -42,6 +44,42 @@ def get_df_entries(project_pk: int) -> pd.DataFrame:
         entries_data.append(data)
 
     return pd.DataFrame(entries_data)
+
+
+def get_df_full_entries(project_pk: int) -> (pd.DataFrame, set):
+    project = Project.objects.get(pk=project_pk)
+
+    entries = project.entry_set.filter(is_active=True)
+    entries_data = []
+    limit_width_cols = set()
+    for entry in entries:
+        data = {
+            "Entry ID": entry.pk,
+            "Title": entry.title,
+            "URL": entry.get_full_url(),
+        }
+
+        entry_data = merge_fields_with_submission_data(
+            fields=entry.project.fields, data=entry.data
+        )
+
+        for row in entry_data:
+            if row.get("inputs", []):
+                for input_row in row.get("inputs", []):
+                    data[input_row["label"]] = input_row["value"]
+
+                    if len(input_row["value"]) > 100:
+                        limit_width_cols.add(input_row["label"])
+
+            elif row.get("value"):
+                data[row["label"]] = row["value"]
+
+                if len(row["value"]) > 100:
+                    limit_width_cols.add(row["label"])
+
+        entries_data.append(data)
+
+    return pd.DataFrame(entries_data), limit_width_cols
 
 
 def get_df_ratings(project_pk: int) -> pd.DataFrame:
