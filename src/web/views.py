@@ -2,7 +2,6 @@ import json
 from styleframe import StyleFrame, Styler
 import datetime
 from io import BytesIO
-from icecream import ic
 
 from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
@@ -194,6 +193,7 @@ class LoginKeyCheckView(FormView):
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         user = User.objects.get(email__iexact=email)
+
         ctx = {"email": email}
 
         key = LoginKey(user=user, email=email)

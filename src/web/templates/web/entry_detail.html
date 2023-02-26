@@ -24,7 +24,7 @@
                             {% endfor %}
                         </dd>
                     {% else %}
-                        <div class="{% if not line.type == 'checkbox' %}flex{% endif %} h-auto mb-4">
+                        <div class="{% if not line.type == 'checkbox' %}flex flex-col{% endif %} h-auto mb-4">
                             {% for iline in line.inputs %}
                                 <div class="">
                                     {% if line.type != 'name' and line.type != 'checkbox' %}

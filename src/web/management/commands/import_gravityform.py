@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
         for raw_entry in entries.get("entries", []):
             # TODO: Make this dynamic lookup into fields
-            title = raw_entry.get("30")
+            title = raw_entry.get(settings.GFORMS_TITLE_ID)
             key = raw_entry.get("id")
             entry, _ = Entry.objects.get_or_create(
                 project=project, title=title, key=key
