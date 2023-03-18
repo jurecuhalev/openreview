@@ -212,7 +212,7 @@ class LoginKey(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "{} - {}".format(self.user, self.email)
+        return f"{self.user} - {self.email}"
 
     def save(self, *args, **kwargs):
         if not self.key:
@@ -227,7 +227,7 @@ class LoginKey(models.Model):
             {"url": self.get_absolute_url(), "email": site_settings.email},
         )
         send_mail(
-            "{} login information".format(site_settings.name),
+            f"{site_settings.name} login information",
             body,
             settings.DEFAULT_FROM_EMAIL,
             [self.email],
