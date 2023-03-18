@@ -16,6 +16,21 @@ class Project(models.Model):
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    gforms_key = models.CharField(max_length=50, default="")
+    gforms_secret = models.CharField(max_length=50, default="")
+    gforms_url = models.CharField(max_length=120, default="")
+    gforms_id = models.IntegerField(blank=True, null=True)
+    gforms_title_id = models.IntegerField(blank=True, null=True)
+
+    automatic_import = models.BooleanField(
+        default=False,
+        help_text="Tries to automatically import new entries from Gravity Forms every N minutes",
+    )
+    assign_reviewers = models.BooleanField(
+        default=False,
+        help_text="Assigns all users that have access to project to be reviewers for newly imported entries",
+    )
+
     def __str__(self):
         return self.name
 
