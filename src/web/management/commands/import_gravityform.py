@@ -10,34 +10,35 @@ class Command(BaseCommand):
     help = "Imports Gravity Forms entries"
 
     def handle(self, *args, **options):
-        self._import_entries()
+        for project in Project.objects.filter(automatic_import=True):
+            self._import_entries(project=project)
 
-    def _import_entries(self):
+    def _import_entries(self, project: Project):
         entries_url = (
-            settings.GFORMS_URL.format(settings.GFORMS_ID)
+            project.gforms_url.format(project.gforms_id)
             + "/entries?paging[page_size]=300&_labels=1"
         )
         entries = requests.get(
             entries_url,
-            auth=(settings.GFORMS_KEY, settings.GFORMS_SECRET),
+            auth=(project.gforms_key, project.gforms_secret),
         ).json()
 
-        fields_url = settings.GFORMS_URL.format(settings.GFORMS_ID)
+        fields_url = project.gforms_url.format(project.gforms_id)
         fields = requests.get(
             fields_url,
-            auth=(settings.GFORMS_KEY, settings.GFORMS_SECRET),
+            auth=(project.gforms_key, project.gforms_secret),
         ).json()
 
-        project = Project.objects.latest("pk")
-        project.fields = fields.get("fields")
-        project.save()
+        if project.fields != fields.get("fields"):
+            project.save()
 
         for raw_entry in entries.get("entries", []):
             # TODO: Make this dynamic lookup into fields
-            title = raw_entry.get(settings.GFORMS_TITLE_ID)
+            title = raw_entry.get(project.gforms_title_id)
             key = raw_entry.get("id")
             entry, _ = Entry.objects.get_or_create(
                 project=project, title=title, key=key
             )
             entry.data = raw_entry
             entry.save()
+            entry.auto_assign_reviewers()

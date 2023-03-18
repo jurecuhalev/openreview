@@ -20,7 +20,7 @@ class Project(models.Model):
     gforms_secret = models.CharField(max_length=50, default="")
     gforms_url = models.CharField(max_length=120, default="")
     gforms_id = models.IntegerField(blank=True, null=True)
-    gforms_title_id = models.IntegerField(blank=True, null=True)
+    gforms_title_id = models.CharField(blank=True, null=True, max_length=10)
 
     automatic_import = models.BooleanField(
         default=False,
@@ -157,6 +157,11 @@ class Entry(models.Model):
             return "Promising"
         else:
             return "Early stage"
+
+    def auto_assign_reviewers(self):
+        if self.project.assign_reviewers:
+            for profile in self.project.userprofile_set.filter(user__is_staff=False):
+                self.reviewers.add(profile.user)
 
 
 QUESTION_SCALES = (
