@@ -30,6 +30,7 @@ class Command(BaseCommand):
         ).json()
 
         if project.fields != fields.get("fields"):
+            project.fields = fields.get("fields")
             project.save()
 
         for raw_entry in entries.get("entries", []):
