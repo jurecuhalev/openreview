@@ -41,6 +41,18 @@ class RatingForm(forms.Form):
                     choices=ONE_TO_TEN_CHOICES,
                     help_text=question.description,
                 )
+            elif question.scale == "1-N":
+                choices = [
+                    (str(i), str(i)) for i in range(1, question.num_of_options + 1)
+                ]
+                if question.has_na:
+                    choices.append(("", "N/A"))
+                field = forms.ChoiceField(
+                    label=question.title,
+                    widget=forms.RadioSelect(attrs={"class": "form-radio"}),
+                    choices=choices,
+                    help_text=question.description,
+                )
             else:
                 field = forms.CharField(label=question.title, widget=forms.Textarea)
 

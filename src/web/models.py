@@ -166,6 +166,7 @@ class Entry(models.Model):
 
 QUESTION_SCALES = (
     ("1-10", "1 to 10"),
+    ("1-N", "1 to N"),
     ("text", "Text field"),
     ("bool", "Yes or no"),
 )
@@ -177,6 +178,9 @@ class RatingQuestion(models.Model):
     description = models.TextField(blank=True)
 
     scale = models.CharField(choices=QUESTION_SCALES, max_length=64)
+    num_of_options = models.IntegerField(
+        null=True, blank=True, help_text="If 1 to N scale, define N >= 2 here"
+    )
     has_na = models.BooleanField(default=False)
     is_required = models.BooleanField(default=False)
 
