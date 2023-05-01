@@ -158,6 +158,116 @@ class Entry(models.Model):
         else:
             return "Early stage"
 
+    def get_fixed_score(self):
+        # IDs for 2023
+        scores = {
+            "Outstanding": [135, 153, 211, 121, 123, 180, 204, 145, 185, 218],
+            "Excellent": [
+                162,
+                155,
+                224,
+                201,
+                119,
+                195,
+                197,
+                198,
+                179,
+                165,
+                157,
+                120,
+                146,
+                161,
+                217,
+                183,
+                213,
+                149,
+                124,
+                154,
+            ],
+            "Promising": [
+                126,
+                219,
+                210,
+                214,
+                192,
+                215,
+                130,
+                139,
+                159,
+                144,
+                151,
+                206,
+                190,
+                177,
+                212,
+                203,
+                163,
+                136,
+                199,
+                228,
+                184,
+            ],
+            "Early stage": [
+                133,
+                216,
+                182,
+                129,
+                173,
+                132,
+                208,
+                156,
+                178,
+                160,
+                137,
+                118,
+                122,
+                220,
+                181,
+                189,
+                164,
+                174,
+                188,
+                140,
+                221,
+                167,
+                152,
+                125,
+                128,
+                170,
+                222,
+                191,
+                142,
+                194,
+                158,
+                205,
+                131,
+                176,
+                187,
+                186,
+                134,
+                227,
+                207,
+                147,
+                138,
+                171,
+                223,
+                209,
+                169,
+                166,
+                202,
+                141,
+                175,
+            ],
+        }
+
+        for key, values in scores.items():
+            if self.id in values:
+                return key
+
+    def is_special_mention(self):
+        if self.id in [149, 154, 163]:
+            return True
+
     def auto_assign_reviewers(self):
         if self.project.assign_reviewers:
             for profile in self.project.userprofile_set.filter(user__is_staff=False):
