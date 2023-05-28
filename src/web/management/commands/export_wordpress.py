@@ -282,4 +282,4 @@ class Command(BaseCommand):
                 data=post_data,
             )
             print(response.content)
-            time.sleep(0.1)
+            time.sleep(1)
