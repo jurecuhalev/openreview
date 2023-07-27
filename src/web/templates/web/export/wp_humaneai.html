@@ -1,0 +1,29 @@
+{% for line in submission_data %}
+    {% if line.inputs %}
+        <p><b>{{ line.label }}</b></p>
+        {% if line.type == 'address' %}
+            <p>
+                {% for iline in line.inputs %}
+                    {{ iline.value }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            </p>
+        {% else %}
+            <div>
+                <ul>
+                    {% for iline in line.inputs %}
+                        <li>
+                        {% if iline.label %}<b>{{ iline.label }}</b>{% endif %} {{ iline.value|urlize|linebreaksbr }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if line.type == 'section' %}
+            <p><b>{{ line.label }}</b></p>
+        {% else %}
+            {% if line.label %}<p><b>{{ line.label }}</b></p>{% endif %}
+            <p>{{ line.value|urlize|linebreaksbr }}</p>
+        {% endif %}
+    {% endif %}
+{% endfor %}
