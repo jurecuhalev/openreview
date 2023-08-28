@@ -2,31 +2,43 @@ from icecream import ic
 
 
 def merge_fields_with_submission_data(
-    fields: list, data: dict, excluded_labels=[]
+    fields: list, data: dict, excluded_labels=[], include_empty=False
 ) -> list:
     results = []
     for field in fields:
+        field_id = field.get("id")
         description = field.get("description", "")
         if field.get("inputs"):
             input_fields = []
             for input_field in field.get("inputs"):
                 input_id = str(input_field.get("id"))
+                input_field_id = input_field.get("id")
                 label = input_field.get("label")
+                label_with_id = f"{label} [{input_field_id}]"
                 value = data.get(input_id, "")
                 _type = input_field.get("type")
                 if not _type:
                     _type = field.get("type")
 
-                if value:
-                    input_fields.append({"label": label, "value": value, "type": _type})
+                if value or include_empty:
+                    input_fields.append(
+                        {
+                            "label": label,
+                            "label_with_id": label_with_id,
+                            "value": value,
+                            "type": _type,
+                        }
+                    )
 
             label = field.get("label")
+            label_with_id = f"{label} [{field_id}]"
             _type = field.get("type")
 
             if label not in excluded_labels:
                 results.append(
                     {
                         "label": label,
+                        "label_with_id": label_with_id,
                         "type": _type,
                         "inputs": input_fields,
                         "description": description,
@@ -34,9 +46,13 @@ def merge_fields_with_submission_data(
                 )
 
         elif field.get("type") == "list":
+            label = field.get("label")
+            label_with_id = f"{label} [{field_id}]"
+
             results.append(
                 {
-                    "label": field.get("label"),
+                    "label": label,
+                    "label_with_id": label_with_id,
                     "type": "text",
                     "description": description,
                 }
@@ -46,16 +62,23 @@ def merge_fields_with_submission_data(
 
                 for input_field in field.get("choices"):
                     input_id = str(input_field.get("text"))
-                    label = input_field.get("text")
+                    input_field_id = input_field.get("id")
+                    label = input_field.get("label")
+                    label_with_id = f"{label} [{input_field_id}]"
                     value = list_data.get(input_id, "")
 
                     _type = input_field.get("type")
                     if not _type:
                         _type = field.get("type")
 
-                    if value:
+                    if value or include_empty:
                         input_fields.append(
-                            {"label": label, "value": value, "type": _type}
+                            {
+                                "label": label,
+                                "label_width_id": label_with_id,
+                                "value": value,
+                                "type": _type,
+                            }
                         )
 
                     label = field.get("label")
@@ -73,6 +96,7 @@ def merge_fields_with_submission_data(
         else:
             label = field.get("label")
             field_id = str(field.get("id"))
+            label_with_id = f"{label} [{field_id}]"
             value = data.get(field_id, "")
             _type = field.get("type")
 
@@ -81,6 +105,7 @@ def merge_fields_with_submission_data(
                     results.append(
                         {
                             "label": label,
+                            "label_with_id": label_with_id,
                             "value": value,
                             "type": _type,
                             "description": description,

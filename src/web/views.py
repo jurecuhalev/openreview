@@ -370,9 +370,7 @@ class ProjectExportView(StaffuserRequiredMixin, View):
             sf = StyleFrame(df_full_entries, styler_obj=styler_ratings)
             best_fit_cols = set(df_full_entries.columns.to_list()) - limit_width_cols
             sf.apply_column_style(
-                cols_to_style=limit_width_cols,
-                width=200,
-                styler_obj=styler_ratings,
+                cols_to_style=limit_width_cols, width=200, styler_obj=styler_ratings
             )
             sf.to_excel(
                 excel_writer=writer,
