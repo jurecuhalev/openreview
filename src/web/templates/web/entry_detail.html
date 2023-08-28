@@ -16,7 +16,11 @@
         <dl>
             {% for line in submission_data %}
                 {% if line.inputs %}
-                    <dt class="font-bold text-xl mb-2 mt-6">{{ line.label }}</dt>
+                    <dt class="font-bold text-xl mb-2 mt-6">{{ line.label }}
+                        {% if line.description %}
+                            <span class="font-light text-sm block mb-4">{{ line.description|urlize }}</span>
+                        {% endif %}
+                    </dt>
                     {% if line.type == 'address' %}
                         <dd class="type-{{ iline.type }} mr-2">
                             {% for iline in line.inputs %}
@@ -30,7 +34,6 @@
                                     {% if line.type != 'name' and line.type != 'checkbox' %}
                                         <dt class="type-{{ iline.type }} font-bold">{{ iline.label }}</dt>
                                     {% endif %}
-
                                     <dd class="type-{{ iline.type }} mr-2">{{ iline.value|urlize|linebreaksbr }}</dd>
                                 </div>
                             {% endfor %}

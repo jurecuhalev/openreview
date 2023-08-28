@@ -6,6 +6,7 @@ def merge_fields_with_submission_data(
 ) -> list:
     results = []
     for field in fields:
+        description = field.get("description", "")
         if field.get("inputs"):
             input_fields = []
             for input_field in field.get("inputs"):
@@ -23,10 +24,23 @@ def merge_fields_with_submission_data(
             _type = field.get("type")
 
             if label not in excluded_labels:
-                results.append({"label": label, "type": _type, "inputs": input_fields})
+                results.append(
+                    {
+                        "label": label,
+                        "type": _type,
+                        "inputs": input_fields,
+                        "description": description,
+                    }
+                )
 
         elif field.get("type") == "list":
-            results.append({"label": field.get("label"), "type": "text"})
+            results.append(
+                {
+                    "label": field.get("label"),
+                    "type": "text",
+                    "description": description,
+                }
+            )
             for list_data in data.get(str(field.get("id"))):
                 input_fields = []
 
@@ -48,7 +62,14 @@ def merge_fields_with_submission_data(
                     _type = field.get("type")
 
                 if label not in excluded_labels:
-                    results.append({"label": "", "type": _type, "inputs": input_fields})
+                    results.append(
+                        {
+                            "label": "",
+                            "type": _type,
+                            "inputs": input_fields,
+                            "description": description,
+                        }
+                    )
         else:
             label = field.get("label")
             field_id = str(field.get("id"))
@@ -57,6 +78,13 @@ def merge_fields_with_submission_data(
 
             if label not in excluded_labels:
                 if _type == "section" or value:
-                    results.append({"label": label, "value": value, "type": _type})
+                    results.append(
+                        {
+                            "label": label,
+                            "value": value,
+                            "type": _type,
+                            "description": description,
+                        }
+                    )
 
     return results
