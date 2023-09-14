@@ -75,7 +75,7 @@ def merge_fields_with_submission_data(
                         input_fields.append(
                             {
                                 "label": label,
-                                "label_width_id": label_with_id,
+                                "label_with_id": label_with_id,
                                 "value": value,
                                 "type": _type,
                             }
