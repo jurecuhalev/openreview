@@ -145,7 +145,6 @@ class Command(BaseCommand):
                 "label": "Project Partners",
                 "inputs": [],
             }
-            # ic(submission)
             for item in submission:
                 if item["type"] == "list":
                     d = {}

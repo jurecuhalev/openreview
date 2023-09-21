@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 random_entry = Entry.objects.get(pk=random_entry_id)
 
                 if reviewer not in random_entry.reviewers.all():
-                    ic(reviewer)
+                    ic(reviewer.user)
                     random_entry.reviewers.add(reviewer.user)
                     entries_list_remove.remove(random_entry_id)
                     selected_count += 1

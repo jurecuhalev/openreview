@@ -60,10 +60,12 @@ def merge_fields_with_submission_data(
             for list_data in data.get(str(field.get("id"))):
                 input_fields = []
 
+                id_counter = 0
                 for input_field in field.get("choices"):
+                    id_counter += 1
                     input_id = str(input_field.get("text"))
-                    input_field_id = input_field.get("id")
-                    label = input_field.get("label")
+                    input_field_id = id_counter
+                    label = input_field.get("text")
                     label_with_id = f"{label} [{input_field_id}]"
                     value = list_data.get(input_id, "")
 
