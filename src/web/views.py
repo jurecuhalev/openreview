@@ -40,7 +40,7 @@ class IndexView(LoginRequiredMixin, ListView):
     context_object_name = "project_list"
 
     def get_queryset(self):
-        return Project.objects.filter(is_active=True)
+        return self.request.user.userprofile.projects.filter(is_active=True)
 
 
 class EntryListView(LoginRequiredMixin, ListView):
