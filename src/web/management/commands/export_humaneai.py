@@ -107,7 +107,9 @@ class Command(BaseCommand):
             "Project title",
         ]
         LabelOrder = namedtuple("LabelOrder", ["label", "type", "new_label"])
-        for entry in Entry.objects.filter(project__id=3, is_active=True):
+        for entry in Entry.objects.filter(project__id=3, is_active=True).order_by(
+            "-id"
+        )[:10]:
             response = self.session.get(
                 "{}/wp/v2/search/".format(settings.EXPORT_HUMANEAI_WP_URL),
                 params={"search": entry.title, "subtype[]": "project"},
@@ -122,8 +124,6 @@ class Command(BaseCommand):
                 data=entry.data,
                 excluded_labels=excluded_labels,
             )
-
-            from icecream import ic
 
             order_of_labels = [
                 LabelOrder("Tagline", "text", ""),
