@@ -396,7 +396,7 @@ class RankingView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get("project"))
 
-        numeric_questions = project.ratingquestion_set.filter(scale__in=["1-10", "1-N"])
+        numeric_questions = project.ratingquestion_set.filter(scale__in=["1-10"])
         order_by = self.request.GET.get("order_by", 0)
 
         context["numeric_questions"] = numeric_questions
