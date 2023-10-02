@@ -27,6 +27,11 @@
                                class="tab {% current_tab_class current_tab 'entry' %}">Entries</a>
                         {% endif %}
 
+                        {% if current_project %}
+                            <a href="{% url 'rankings' project=current_project.pk %}"
+                               class="tab {% current_tab_class current_tab 'rankings' %}">Rankings</a>
+                        {% endif %}
+
                         {% if request.user.is_staff and current_project %}
                             <a href="{% url 'reviewer-list' project=current_project.pk %}"
                                class="tab {% current_tab_class current_tab 'reviewer' %}">Reviewers</a>
@@ -92,8 +97,10 @@
                class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                aria-current="page">Home</a>
 
-            <a href="#"
+            {% if current_project %}
+            <a href="href="{% url 'entry-list' project=current_project.pk %}""
                class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Entries</a>
+            {% endif %}
 
             {% if request.user.is_staff and current_project %}
                 <a href="{% url 'reviewer-list' project=current_project.pk %}"

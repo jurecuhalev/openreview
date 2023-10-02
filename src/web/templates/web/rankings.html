@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block heading %}Rankings for {{ current_project.name }}{% endblock %}
+
+{% block content_full %}
+    <div class="bg-white p-4 rounded-md mb-6">
+        <div class="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-2">
+            <div class="order-last flex w-full gap-x-4 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:leading-6">
+                <a
+                        class="{% if order_by == 0 %}text-indigo-600{% else %}text-gray-700{% endif %}"
+                        href="{% url 'rankings' project=current_project.pk %}">Average rating
+                </a>
+                {% for question in numeric_questions %}
+                    <a
+                            class="{% if order_by == question.id %}text-indigo-600{% else %}text-gray-700{% endif %}"
+                            href="{% url 'rankings' project=current_project.pk %}?order_by={{ question.id }}">
+                        {{ question.title }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            {% for entry in entry_list %}
+                {% include "web/_entry_group_staff.html" with entry=entry %}
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}

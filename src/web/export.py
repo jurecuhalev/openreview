@@ -114,7 +114,7 @@ def get_df_ratings(project_pk: int) -> pd.DataFrame:
     return pd.DataFrame(ratings_data)
 
 
-def get_df_ratings_avg(project_pk: int) -> pd.DataFrame:
+def get_df_ratings_avg(project_pk: int, sort_column="Total Avg") -> pd.DataFrame:
     project = Project.objects.get(pk=project_pk)
 
     entries = project.entry_set.filter(is_active=True)
@@ -134,6 +134,6 @@ def get_df_ratings_avg(project_pk: int) -> pd.DataFrame:
         ratings_data.append(data)
 
     df = pd.DataFrame(ratings_data)
-    df = df.sort_values("Total Avg", ascending=False)
+    df = df.sort_values(sort_column, ascending=False)
 
     return df

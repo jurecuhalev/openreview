@@ -2,7 +2,7 @@ import json
 from styleframe import StyleFrame, Styler
 import datetime
 from io import BytesIO
-from icecream import ic
+from django.db.models import Case, When
 
 from braces.views import StaffuserRequiredMixin
 from django.db.models import Count
@@ -14,7 +14,6 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.views import View
 from django.http import HttpResponse
-
 
 from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib import messages
@@ -388,3 +387,31 @@ class ProjectExportView(StaffuserRequiredMixin, View):
             )
             response["Content-Disposition"] = "attachment; filename=%s" % filename
             return response
+
+
+class RankingView(LoginRequiredMixin, TemplateView):
+    template_name = "web/rankings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project = Project.objects.get(pk=self.kwargs.get("project"))
+
+        numeric_questions = project.ratingquestion_set.filter(scale__in=["1-10", "1-N"])
+        order_by = self.request.GET.get("order_by", 0)
+
+        context["numeric_questions"] = numeric_questions
+        context["order_by"] = int(order_by)
+
+        if order_by:
+            order_title = numeric_questions.get(pk=order_by).title
+        else:
+            order_title = "Total Avg"
+
+        ratings = get_df_ratings_avg(project_pk=project.pk, sort_column=order_title)
+        entry_ids = ratings["Entry ID"].array
+
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(entry_ids)])
+        entry_list = Entry.objects.filter(pk__in=entry_ids).order_by(preserved)
+        context["entry_list"] = entry_list
+
+        return context

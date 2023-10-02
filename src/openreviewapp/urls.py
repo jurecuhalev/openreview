@@ -12,6 +12,7 @@ from web.views import (
     ReviewerDetailView,
     EntryAssignReviewer,
     ProjectExportView,
+    RankingView,
 )
 
 urlpatterns = [
@@ -40,6 +41,11 @@ urlpatterns = [
         "project/<int:project>/reviewer/<int:pk>/",
         ReviewerDetailView.as_view(),
         name="reviewer-detail",
+    ),
+    path(
+        "project/<int:project>/rankings/",
+        RankingView.as_view(),
+        name="rankings",
     ),
     path("accounts/", include("django.contrib.auth.urls")),
     path("login/<str:key>/", LoginKeyCheckView.as_view(), name="login-key-check"),
