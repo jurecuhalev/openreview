@@ -34,8 +34,16 @@ class Command(BaseCommand):
             project.save()
 
         for raw_entry in entries.get("entries", []):
-            # TODO: Make this dynamic lookup into fields
-            title = raw_entry.get(project.gforms_title_id)
+            if project.gforms_title_id.isdigit():
+                title = raw_entry.get(project.gforms_title_id)
+            else:
+                title_fields = []
+                for key_id in project.gforms_title_id.split(","):
+                    fragment = raw_entry.get(key_id.strip())
+                    if fragment:
+                        title_fields.append(fragment)
+                title = " ".join(title_fields)
+
             key = raw_entry.get("id")
             entry, _ = Entry.objects.get_or_create(
                 project=project, title=title, key=key
