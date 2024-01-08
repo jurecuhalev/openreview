@@ -35,7 +35,7 @@ class Command(BaseCommand):
         amount = options.get("amount")
         project = Project.objects.get(pk=options.get("project"))
         reviewers = project.userprofile_set.filter(user__is_staff=False)
-        entries = Entry.active.filter(project=project)
+        entries = Entry.active.filter(project=project, is_active=True)
 
         reviewers_count = reviewers.count()
         entries_count = entries.count()
