@@ -54,7 +54,7 @@ class RatingForm(forms.Form):
                     help_text=question.description,
                 )
             else:
-                field = forms.CharField(label=question.title, widget=forms.Textarea)
+                field = forms.CharField(label=question.title, widget=forms.Textarea, help_text=question.description)
 
             if question.is_required:
                 field.required = True
