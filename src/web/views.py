@@ -267,7 +267,7 @@ class ReviewerListView(StaffuserRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         project = Project.objects.get(pk=self.kwargs.get("project"))
 
-        user_profiles = project.userprofile_set.all().order_by("user__first_name")
+        user_profiles = project.userprofile_set.filter(user__is_staff=False).order_by("user__first_name")
         reviewer_list = []
 
         for user_profile in user_profiles:

@@ -17,11 +17,18 @@ class Command(BaseCommand):
             help="Internal project id",
         )
 
+        # parser.add_argument(
+        #     "--amount",
+        #     type=int,
+        #     required=True,
+        #     help="How many entries per reviewer",
+        # )
+
         parser.add_argument(
             "--amount",
             type=int,
             required=True,
-            help="How many entries per reviewer",
+            help="How many entries per paper",
         )
 
         parser.add_argument(
@@ -35,7 +42,7 @@ class Command(BaseCommand):
         amount = options.get("amount")
         project = Project.objects.get(pk=options.get("project"))
         reviewers = project.userprofile_set.filter(user__is_staff=False)
-        entries = Entry.active.filter(project=project, is_active=True)
+        entries = Entry.active.filter(project=project)
 
         reviewers_count = reviewers.count()
         entries_count = entries.count()
@@ -44,21 +51,25 @@ class Command(BaseCommand):
         self.stdout.write("Reviewers: {}".format(reviewers_count))
         self.stdout.write("Entries: {}".format(entries_count))
 
-        for entry in entries:
+        for entry in Entry.objects.filter(project=project):
             entry.reviewers.clear()
 
-        entries_list_remove = entries_list[:]
-        for reviewer in reviewers:
-            selected_count = 0
-            while selected_count < amount:
-                random_entry_id = random.choice(entries_list_remove)
-                random_entry = Entry.objects.get(pk=random_entry_id)
+        reviewers_counter = dict((reviewer.pk, 0) for reviewer in reviewers)
+        max_reviewer_papers = round(entries_count * amount / reviewers_count)
+        reviewers = list(reviewers)
+        for entry in entries:
+            entry_count = 0
 
-                if reviewer not in random_entry.reviewers.all():
-                    ic(reviewer.user)
-                    random_entry.reviewers.add(reviewer.user)
-                    entries_list_remove.remove(random_entry_id)
-                    selected_count += 1
+            random.shuffle(reviewers)
+            reviewers = sorted(reviewers, key=lambda reviewer: reviewers_counter[reviewer.pk])
+            for reviewer in reviewers:
+                if reviewers_counter[reviewer.pk] > max_reviewer_papers:
+                    continue
 
-                if not entries_list_remove:
-                    entries_list_remove = entries_list[:]
+                if entry_count < amount:
+                    entry.reviewers.add(reviewer.user)
+                    entry_count += 1
+                    reviewers_counter[reviewer.pk] += 1
+                else:
+                    break
+
