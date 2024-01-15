@@ -3,6 +3,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
@@ -118,8 +119,10 @@ class Entry(models.Model):
 
     def get_average_ratings(self):
         scores = {}
-        for rating in self.ratinganswer_set.filter(question__scale="1-10"):
+        total_avg_keys = set()
+        for rating in self.ratinganswer_set.filter(Q(question__scale="1-10") | Q(question__include_in_statistics=True)):
             title = rating.question.title
+
             try:
                 value = int(rating.value)
             except ValueError:
@@ -129,10 +132,15 @@ class Entry(models.Model):
             except KeyError:
                 scores[title] = [value]
 
+            if rating.question.scale == "1-10":
+                total_avg_keys.add(title)
+
         scores_avg = {}
         total = []
         for key, value in scores.items():
-            total += value
+            if key in total_avg_keys:
+                total += value
+
             scores_avg[key] = round(statistics.mean(value), 2)
 
         if total:
@@ -293,6 +301,7 @@ class RatingQuestion(models.Model):
     )
     has_na = models.BooleanField(default=False)
     is_required = models.BooleanField(default=False)
+    include_in_statistics = models.BooleanField(default=False, help_text="Include 1 to N scale question in statistics")
 
     order = models.IntegerField()
     changed = models.DateTimeField(auto_now=True)
