@@ -1,0 +1,8 @@
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.djlint]
+ignore = "H006,H023,H013,T003,H030,H031,D018"
