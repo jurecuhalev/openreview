@@ -2,18 +2,17 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
+from web.forms import SiteSettingsForm
 from web.models import (
-    UserProfile,
-    Project,
     Category,
     Entry,
-    RatingQuestion,
-    RatingAnswer,
-    SiteSettings,
+    Project,
     Rating,
+    RatingAnswer,
+    RatingQuestion,
+    SiteSettings,
+    UserProfile,
 )
-
-from web.forms import SiteSettingsForm
 
 
 class UserProfilelInline(admin.StackedInline):
@@ -37,7 +36,7 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ("is_active", "automatic_import", "assign_reviewers")
 
 
 @admin.register(Category)
