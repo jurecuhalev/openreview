@@ -1,13 +1,13 @@
 import statistics
 import uuid
 
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.db import models
 from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.core.mail import send_mail
-from django.conf import settings
 
 
 class Project(models.Model):
@@ -37,7 +37,7 @@ class Project(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.PROTECT)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     projects = models.ManyToManyField(Project)
     is_active = models.BooleanField(default=True)
 
@@ -70,9 +70,7 @@ class Entry(models.Model):
     title = models.TextField()
     key = models.CharField(null=True, blank=True, max_length=120)
 
-    category = models.ForeignKey(
-        Category, blank=True, null=True, on_delete=models.CASCADE
-    )
+    category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.CASCADE)
 
     data = models.JSONField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -91,9 +89,7 @@ class Entry(models.Model):
 
     def get_full_url(self):
         site_settings = SiteSettings.objects.latest("pk")
-        return site_settings.url + reverse_lazy(
-            "entry-detail", kwargs={"project": self.project.pk, "pk": self.pk}
-        )
+        return site_settings.url + reverse_lazy("entry-detail", kwargs={"project": self.project.pk, "pk": self.pk})
 
     def get_admin_url(self):
         return reverse_lazy(
@@ -109,12 +105,8 @@ class Entry(models.Model):
 
     def get_reviewers(self):
         reviewers = []
-        for user in User.objects.filter(
-            is_staff=False, userprofile__projects=self.project
-        ).order_by("first_name"):
-            reviewers.append(
-                {"user": user, "assigned": self.reviewers.filter(pk=user.pk).exists()}
-            )
+        for user in User.objects.filter(is_staff=False, userprofile__projects=self.project).order_by("first_name"):
+            reviewers.append({"user": user, "assigned": self.reviewers.filter(pk=user.pk).exists()})
         return reviewers
 
     def get_average_ratings(self):
@@ -296,9 +288,7 @@ class RatingQuestion(models.Model):
     description = models.TextField(blank=True)
 
     scale = models.CharField(choices=QUESTION_SCALES, max_length=64)
-    num_of_options = models.IntegerField(
-        null=True, blank=True, help_text="If 1 to N scale, define N >= 2 here"
-    )
+    num_of_options = models.IntegerField(null=True, blank=True, help_text="If 1 to N scale, define N >= 2 here")
     has_na = models.BooleanField(default=False)
     is_required = models.BooleanField(default=False)
     include_in_statistics = models.BooleanField(default=False, help_text="Include 1 to N scale question in statistics")
@@ -337,9 +327,7 @@ class SiteSettings(models.Model):
     logo = models.ImageField(upload_to="public", blank=True)
     name = models.CharField(max_length=255, default="Open Review System", blank=True)
     email = models.EmailField(max_length=255, default="")
-    url = models.TextField(
-        default="http://localhost:8000", help_text="URL without ending slash"
-    )
+    url = models.TextField(default="http://localhost:8000", help_text="URL without ending slash")
 
     class Meta:
         verbose_name = "Site Settings"
@@ -378,6 +366,4 @@ class LoginKey(models.Model):
 
     def get_absolute_url(self):
         site_settings = SiteSettings.objects.latest("pk")
-        return site_settings.url + reverse_lazy(
-            "login-key-check", kwargs={"key": self.key}
-        )
+        return site_settings.url + reverse_lazy("login-key-check", kwargs={"key": self.key})
