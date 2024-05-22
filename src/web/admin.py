@@ -37,6 +37,7 @@ class UserAdmin(BaseUserAdmin):
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_filter = ("is_active", "automatic_import", "assign_reviewers")
+    list_display = ("name", "id")
 
 
 @admin.register(Category)

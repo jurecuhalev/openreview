@@ -1,8 +1,6 @@
-from django.core.management import BaseCommand
 from django.contrib.auth.models import User
-from icecream import ic
+from django.core.management import BaseCommand
 from tablib import Dataset
-
 from web.models import Project, UserProfile
 
 
@@ -30,9 +28,9 @@ class Command(BaseCommand):
         project = Project.objects.get(pk=options.get("project"))
 
         for row in data:
-            if row[0]:
-                email = row[0].lower().strip()
-                first_name = row[2]
+            if row[2] and "@" in row[2]:
+                email = row[2].lower().strip()
+                first_name = row[0]
                 last_name = row[1]
 
                 user, is_created = User.objects.get_or_create(
