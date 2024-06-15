@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 import pandas as pd
-from icecream import ic
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 
 from web.models import Project
 from web.submissions_processing import merge_fields_with_submission_data
@@ -64,20 +64,18 @@ def get_df_full_entries(project_pk: int) -> (pd.DataFrame, set):
             }
         )
 
-        entry_data = merge_fields_with_submission_data(
-            fields=entry.project.fields, data=entry.data, include_empty=True
-        )
+        entry_data = merge_fields_with_submission_data(fields=entry.project.fields, data=entry.data, include_empty=True)
 
         for row in entry_data:
             if row.get("inputs", []):
                 for input_row in row.get("inputs", []):
-                    data[input_row["label_with_id"]] = input_row["value"]
+                    data[input_row["label_with_id"]] = ILLEGAL_CHARACTERS_RE.sub("", input_row["value"])
 
                     if len(input_row["value"]) > 100:
-                        limit_width_cols.add(input_row["label_with_id"])
+                        limit_width_cols.add(ILLEGAL_CHARACTERS_RE.sub("", input_row["label_with_id"]))
 
             elif row.get("value"):
-                data[row["label_with_id"]] = row["value"]
+                data[row["label_with_id"]] = ILLEGAL_CHARACTERS_RE.sub("", row["value"])
 
                 if len(row["value"]) > 100:
                     limit_width_cols.add(row["label_with_id"])
