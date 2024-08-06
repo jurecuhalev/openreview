@@ -1,37 +1,32 @@
-import json
-from styleframe import StyleFrame, Styler
 import datetime
+import json
 from io import BytesIO
-from django.db.models import Case, When
 
 from braces.views import StaffuserRequiredMixin
-from django.db.models import Count
-from django.shortcuts import render
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.shortcuts import redirect
-
-from django.utils import timezone
-from django.views import View
-from django.http import HttpResponse
-
-from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib import messages
-from django.views.generic.edit import FormMixin, FormView
-
-from django.urls import reverse_lazy
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.db.models import Case, Count, When
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.html import format_html
+from django.views import View
+from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic.edit import FormMixin, FormView
+from styleframe import StyleFrame, Styler
 
 from web.export import (
-    get_df_reviewers,
     get_df_entries,
+    get_df_full_entries,
     get_df_ratings,
     get_df_ratings_avg,
-    get_df_full_entries,
+    get_df_reviewers,
 )
-from web.forms import RatingForm, LoginForm
-from web.models import Entry, RatingQuestion, RatingAnswer, LoginKey, Project
+from web.forms import LoginForm, RatingForm
+from web.models import Entry, LoginKey, Project, RatingAnswer, RatingQuestion
 from web.submissions_processing import merge_fields_with_submission_data
 
 
@@ -48,22 +43,14 @@ class EntryListView(LoginRequiredMixin, ListView):
     context_object_name = "entry_list"
 
     def get_queryset(self):
-        return (
-            Entry.active.filter(project__pk=self.kwargs["project"])
-            .order_by("title")
-            .prefetch_related("project")
-        )
+        return Entry.active.filter(project__pk=self.kwargs["project"]).order_by("title").prefetch_related("project")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
         if not self.request.user.is_staff:
-            reviewer_on = (
-                self.get_queryset()
-                .filter(reviewers=user)
-                .exclude(ratinganswer__user=user)
-            )
+            reviewer_on = self.get_queryset().filter(reviewers=user).exclude(ratinganswer__user=user)
 
             rating_status = {
                 "Assigned to you for review": reviewer_on,
@@ -71,9 +58,7 @@ class EntryListView(LoginRequiredMixin, ListView):
                 .distinct()
                 .exclude(pk__in=reviewer_on)
                 .exclude(ratinganswer__user=user),
-                "Completed reviews": self.get_queryset()
-                .filter(ratinganswer__user=user)
-                .distinct(),
+                "Completed reviews": self.get_queryset().filter(ratinganswer__user=user).distinct(),
             }
 
             context["ratings_by_status"] = rating_status
@@ -91,15 +76,11 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
 
     def get_form(self, form_class=None):
         entry = self.get_object()
-        self.questions = RatingQuestion.objects.filter(project=entry.project).order_by(
-            "order"
-        )
+        self.questions = RatingQuestion.objects.filter(project=entry.project).order_by("order")
         self.answers = RatingAnswer.objects.filter(user=self.request.user, entry=entry)
 
         if self.request.POST:
-            form = RatingForm(
-                data=self.request.POST, questions=self.questions, answers=self.answers
-            )
+            form = RatingForm(data=self.request.POST, questions=self.questions, answers=self.answers)
 
         else:
             form = RatingForm(questions=self.questions, answers=self.answers)
@@ -110,15 +91,11 @@ class EntryDetailView(LoginRequiredMixin, DetailView, FormMixin):
         context = super().get_context_data(**kwargs)
 
         entry = self.get_object()
-        context["submission_data"] = merge_fields_with_submission_data(
-            fields=entry.project.fields, data=entry.data
-        )
+        context["submission_data"] = merge_fields_with_submission_data(fields=entry.project.fields, data=entry.data)
 
         if self.request.user.is_staff:
             entry = self.get_object()
-            questions = RatingQuestion.objects.filter(project=entry.project).order_by(
-                "order"
-            )
+            questions = RatingQuestion.objects.filter(project=entry.project).order_by("order")
             answers = (
                 RatingAnswer.objects.filter(entry=entry)
                 .values(
@@ -210,12 +187,8 @@ class LoginKeyCheckView(FormView):
             return redirect(reverse_lazy("index"))
 
         today = timezone.now()
-        if LoginKey.objects.filter(
-            key=key, pub_date__gte=(today - datetime.timedelta(days=7))
-        ).exists():
-            login_key = LoginKey.objects.get(
-                key=key, pub_date__gte=(today - datetime.timedelta(days=7))
-            )
+        if LoginKey.objects.filter(key=key, pub_date__gte=(today - datetime.timedelta(days=7))).exists():
+            login_key = LoginKey.objects.get(key=key, pub_date__gte=(today - datetime.timedelta(days=7)))
 
             login_key.user.backend = "django.contrib.auth.backends.ModelBackend"
             login(self.request, login_key.user)
@@ -242,13 +215,11 @@ class ReviewerDetailView(StaffuserRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        entries = Entry.active.filter(project__pk=self.kwargs["project"]).order_by(
-            "title"
-        )
+        entries = Entry.active.filter(project__pk=self.kwargs["project"]).order_by("title")
         user = self.get_object().user
 
         waiting_reviews = entries.filter(reviewers=user).exclude(rating__user=user)
-        completed_reviews = entries.filter(reviewers=user).filter(rating__user=user)
+        completed_reviews = entries.filter(rating__user=user)
 
         rating_status = {
             "Waiting for review": waiting_reviews,
@@ -272,10 +243,7 @@ class ReviewerListView(StaffuserRequiredMixin, TemplateView):
 
         for user_profile in user_profiles:
             count_done = (
-                user_profile.user.ratinganswer_set.filter(entry__project=project)
-                .values("entry")
-                .distinct()
-                .count()
+                user_profile.user.ratinganswer_set.filter(entry__project=project).values("entry").distinct().count()
             )
             count_total = user_profile.user.entry_set.filter(project=project).count()
 
@@ -343,18 +311,14 @@ class ProjectExportView(StaffuserRequiredMixin, View):
             # FIXME: This should be a lookup into database for 'textarea' type of question
             sf = StyleFrame(df_ratings, styler_obj=styler_ratings)
             sf.apply_column_style(
-                cols_to_style=df_ratings.columns[
-                    df_ratings.columns.str.endswith("remarks")
-                ].to_list(),
+                cols_to_style=df_ratings.columns[df_ratings.columns.str.endswith("remarks")].to_list(),
                 width=100,
                 styler_obj=styler_ratings,
             )
             sf.to_excel(
                 excel_writer=writer,
                 sheet_name="Reviews",
-                best_fit=df_ratings.columns[
-                    ~df_ratings.columns.str.endswith("remarks")
-                ].to_list(),
+                best_fit=df_ratings.columns[~df_ratings.columns.str.endswith("remarks")].to_list(),
                 index=False,
             )
 
@@ -368,9 +332,7 @@ class ProjectExportView(StaffuserRequiredMixin, View):
 
             sf = StyleFrame(df_full_entries, styler_obj=styler_ratings)
             best_fit_cols = set(df_full_entries.columns.to_list()) - limit_width_cols
-            sf.apply_column_style(
-                cols_to_style=limit_width_cols, width=200, styler_obj=styler_ratings
-            )
+            sf.apply_column_style(cols_to_style=limit_width_cols, width=200, styler_obj=styler_ratings)
             sf.to_excel(
                 excel_writer=writer,
                 sheet_name="Entries (detailed)",

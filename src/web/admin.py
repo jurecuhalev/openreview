@@ -69,6 +69,7 @@ class RatingAnswerAdmin(admin.ModelAdmin):
 @admin.register(Rating)
 class Rating(admin.ModelAdmin):
     list_display = ("pk", "entry", "user")
+    raw_id_fields = ("answers",)
 
 
 @admin.register(SiteSettings)
