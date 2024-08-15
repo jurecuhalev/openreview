@@ -377,3 +377,44 @@ class RankingView(LoginRequiredMixin, TemplateView):
         context["entry_list"] = entry_list
 
         return context
+
+
+class EntryGroupedView(LoginRequiredMixin, TemplateView):
+    template_name = "web/entry_grouped.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        project = Project.objects.get(pk=self.kwargs.get("project"))
+
+        entries = Entry.active.filter(project=project).order_by("title")
+
+        label_key_options = []
+        for field in project.fields:
+            if field.get("inputType") == "checkbox" or field.get("type") == "checkbox":
+                label_key_options.append(field.get("label"))
+
+        context["label_key_options"] = label_key_options
+
+        label_key = self.request.GET.get("group_by")
+        context["group_by"] = label_key
+
+        if label_key:
+            entry_groups = {}
+            for entry in entries:
+                data = merge_fields_with_submission_data(fields=entry.project.fields, data=entry.data)
+
+                for row in data:
+                    if row.get("label") == label_key:
+                        for row_entry in row.get("inputs", []):
+                            label = row_entry.get("label")
+
+                            if label not in entry_groups:
+                                entry_groups[label] = []
+
+                            entry_groups[label].append(entry)
+
+            for label in entry_groups.keys():
+                entry_groups[label].sort(key=lambda e: e.get_average_ratings()["Total Avg"], reverse=True)
+            context["entry_groups"] = entry_groups
+
+        return context

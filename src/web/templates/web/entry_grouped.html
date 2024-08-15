@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load cache %}
+{% block heading %}Group entries by answer for {{ current_project.name }}{% endblock %}
+{% block content_full %}
+    <div class="bg-white p-4 rounded-md mb-6">
+        <div class="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-2">
+            <div class="order-last flex flex-col gap-4 w-full gap-x-4 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:leading-6">
+                {% for label in label_key_options %}
+                    <a class="{% if group_by == label %}text-indigo-600{% else %}text-gray-700{% endif %} hover:text-indigo-400"
+                       href="{% url 'grouped' project=current_project.id %}?group_by={{ label }}">{{ label }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% for group, entries in entry_groups.items %}
+        <div x-data="{show: false}">
+            <header>
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">{{ group }}</h2>
+                </div>
+            </header>
+            <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+                <ul class="divide-y divide-gray-200">
+                    {% for entry in entries %}
+                        {% cache 60 entry_staff entry.id %}
+                        {% include "web/_entry_group_staff.html" with entry=entry %}
+                    {% endcache %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

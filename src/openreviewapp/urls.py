@@ -1,18 +1,18 @@
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.contrib import admin
+from django.urls import include, path
 from web.views import (
-    EntryListView,
+    EntryAssignReviewer,
     EntryDetailView,
+    EntryGroupedView,
+    EntryListView,
     IndexView,
     LoginKeyCheckView,
-    ReviewerListView,
-    ReviewerDetailView,
-    EntryAssignReviewer,
     ProjectExportView,
     RankingView,
+    ReviewerDetailView,
+    ReviewerListView,
 )
 
 urlpatterns = [
@@ -47,6 +47,7 @@ urlpatterns = [
         RankingView.as_view(),
         name="rankings",
     ),
+    path("project/<int:project>/grouped/", EntryGroupedView.as_view(), name="{grouped"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("login/<str:key>/", LoginKeyCheckView.as_view(), name="login-key-check"),
     path("login/", LoginKeyCheckView.as_view(), name="login-key-check"),
