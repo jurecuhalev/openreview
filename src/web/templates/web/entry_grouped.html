@@ -13,13 +13,28 @@
         </div>
     </div>
     {% for group, entries in entry_groups.items %}
-        <div x-data="{show: false}">
+        <div x-data="{show: false}" class="mb-8">
             <header>
-                <div class="mb-4">
-                    <h2 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">{{ group }}</h2>
+                <div class="mb-4 flex flex-row justify-between">
+                    <h2 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">
+                        {{ group }}
+                        ({{ entries|length }})
+                    </h2>
+                    <button type="button"
+                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+                            role="switch"
+                            aria-checked="false"
+                            @click="show = !show"
+                            :class="{'bg-indigo-600': show, 'bg-gray-200': !show}">
+                        <span class="sr-only">Use setting</span>
+                        <span aria-hidden="true"
+                              class="pointer-events-none inline-block h-5 w-5 translate-x-0 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                              :class="{'translate-x-5': show, 'translate-x-0': !show}"></span>
+                    </button>
                 </div>
             </header>
-            <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8">
+            <div class="bg-white shadow overflow-hidden sm:rounded-md mb-8"
+                 x-show="show">
                 <ul class="divide-y divide-gray-200">
                     {% for entry in entries %}
                         {% cache 60 entry_staff entry.id %}

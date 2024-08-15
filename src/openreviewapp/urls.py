@@ -47,7 +47,7 @@ urlpatterns = [
         RankingView.as_view(),
         name="rankings",
     ),
-    path("project/<int:project>/grouped/", EntryGroupedView.as_view(), name="{grouped"),
+    path("project/<int:project>/grouped/", EntryGroupedView.as_view(), name="grouped"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("login/<str:key>/", LoginKeyCheckView.as_view(), name="login-key-check"),
     path("login/", LoginKeyCheckView.as_view(), name="login-key-check"),
