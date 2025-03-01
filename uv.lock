@@ -399,6 +399,7 @@ dependencies = [
     { name = "sentry-sdk" },
     { name = "styleframe" },
     { name = "tablib", extra = ["xlsx"] },
+    { name = "uwsgi", marker = "sys_platform == 'linux'" },
     { name = "xlsxwriter" },
 ]
 
@@ -424,6 +425,7 @@ requires-dist = [
     { name = "sentry-sdk" },
     { name = "styleframe", specifier = "==4.2" },
     { name = "tablib", extras = ["xlsx"], specifier = "==3.0.0" },
+    { name = "uwsgi", marker = "sys_platform == 'linux'", specifier = ">=2.0.28" },
     { name = "xlsxwriter", specifier = "==3.0.1" },
 ]
 
@@ -788,6 +790,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/e4/e8/6ff5e6bc22095cfc5
 wheels = [
     { url = "https://files.pythonhosted.org/packages/33/cf/8435d5a7159e2a9c83a95896ed596f68cf798005fe107cc655b5c5c14704/urllib3-1.26.20-py2.py3-none-any.whl", hash = "sha256:0ed14ccfbf1c30a9072c7ca157e4319b70d65f623e91e7b32fadb2853431016e", size = 144225 },
 ]
+
+[[package]]
+name = "uwsgi"
+version = "2.0.28"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/24/c2/d58480aadc9a1f420dd96fc43cf0dcd8cb5ededb95cab53743529c23b6cd/uwsgi-2.0.28.tar.gz", hash = "sha256:79ca1891ef2df14508ab0471ee8c0eb94bd2d51d03f32f90c4bbe557ab1e99d0", size = 816212 }
 
 [[package]]
 name = "wcwidth"
