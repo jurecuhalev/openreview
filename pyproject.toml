@@ -14,7 +14,7 @@ dependencies = [
     "ipdb>=0.13.13",
     "numpy<2",
     "openpyxl",
-    "pandas<3",
+    "pandas>=2,<3",
     "pillow==8.3.0",
     "psycopg2-binary",
     "pytest-django==4.4.0",
@@ -25,7 +25,7 @@ dependencies = [
     "uwsgi>=2.0.28; sys_platform == 'linux'",
     "xlsxwriter==3.0.1",
 ]
-requires-python = ">=3.10,<3.11"
+requires-python = ">=3.12,<3.13"
 
 [tool.ruff]
 line-length = 120
