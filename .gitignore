@@ -147,5 +147,7 @@ node_modules/
 .parcel-cache
 .DS_Store
 *.xls
+*.xlsx
+*.xslx
+*.numbers
 .direnv
-

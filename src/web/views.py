@@ -287,12 +287,8 @@ class ProjectExportView(StaffuserRequiredMixin, View):
         styler = Styler(horizontal_alignment="general")
         styler_ratings = Styler(horizontal_alignment="general", wrap_text=True)
 
-        # Workaround for Excel interpreting some strings as formulas
-        # https://stackoverflow.com/a/54095887/141200
-        options = {"strings_to_formulas": False, "strings_to_urls": False}
-
         with BytesIO() as b:
-            writer = StyleFrame.ExcelWriter(b, options=options)
+            writer = StyleFrame.ExcelWriter(b)
             sf = StyleFrame(df_reviewers, styler_obj=styler)
             sf.to_excel(
                 excel_writer=writer,

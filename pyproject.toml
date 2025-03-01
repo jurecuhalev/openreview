@@ -1,8 +1,40 @@
+[project]
+name = "openreview"
+version = "1.0"
+dependencies = [
+    "django>=3.2,<3.3",
+    "psycopg2-binary",
+    "requests==2.25.1",
+    "icecream==2.1.0",
+    "pillow==8.3.0",
+    "django-svg-image-form-field==1.0.1",
+    "tablib[xlsx]==3.0.0",
+    "sentry-sdk",
+    "gunicorn==20.1.0",
+    "django-anymail[mailgun]==8.4",
+    "django-vite==1.1.0",
+    "django-braces==1.14.0",
+    "pytest-django==4.4.0",
+    "factory-boy==3.2.0",
+    "django-su==0.9.0",
+    "pandas<3",
+    "xlsxwriter==3.0.1",
+    "styleframe==4.2",
+    "openpyxl",
+    "numpy<2",
+    "ipdb>=0.13.13",
+]
+requires-python = ">=3.10,<3.11"
+
 [tool.ruff]
 line-length = 120
+target-version = "py312"
 
 [tool.ruff.lint]
 extend-select = ["I"]
+
+[tool.uv]
+package = false
 
 [tool.djlint]
 ignore = "H006,H023,H013,T003,H030,H031,D018"

@@ -73,12 +73,15 @@ def get_df_full_entries(project_pk: int) -> (pd.DataFrame, set):
 
                     if len(input_row["value"]) > 100:
                         limit_width_cols.add(ILLEGAL_CHARACTERS_RE.sub("", input_row["label_with_id"]))
-
-            elif row.get("value"):
-                data[row["label_with_id"]] = ILLEGAL_CHARACTERS_RE.sub("", row["value"])
-
-                if len(row["value"]) > 100:
-                    limit_width_cols.add(row["label_with_id"])
+            elif value := row.get("value"):
+                if isinstance(value, str):
+                    data[row["label_with_id"]] = ILLEGAL_CHARACTERS_RE.sub("", value)
+                    if len(row["value"]) > 100:
+                        limit_width_cols.add(row["label_with_id"])
+                elif isinstance(value, list):
+                    data[row["label_with_id"]] = ", ".join(value)
+                else:
+                    data[row["label_with_id"]] = value
 
             else:
                 data[row["label_with_id"]] = ""
