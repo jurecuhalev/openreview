@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 
+from web.submissions_processing import extract_search_text
+
 
 class Project(models.Model):
     name = models.CharField(max_length=120)
@@ -79,6 +81,8 @@ class Entry(models.Model):
     objects = models.Manager()
     active = ActiveEntriesManager()
 
+    search_text = models.TextField(blank=True, null=True)
+
     class Meta:
         verbose_name = "Entry"
         verbose_name_plural = "Entries"
@@ -86,6 +90,15 @@ class Entry(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.search_text = extract_search_text(self)
+        super().save(*args, **kwargs)
+
+    @property
+    def extracted_search_text(self):
+        text = extract_search_text(self)
+        return text
 
     def get_full_url(self):
         site_settings = SiteSettings.objects.latest("pk")
@@ -353,6 +366,7 @@ class LoginKey(models.Model):
 
     def send_email(self):
         site_settings = SiteSettings.objects.latest("pk")
+
         body = render_to_string(
             "mail-login/mail_body.txt",
             {"url": self.get_absolute_url(), "email": site_settings.email},
@@ -366,4 +380,10 @@ class LoginKey(models.Model):
 
     def get_absolute_url(self):
         site_settings = SiteSettings.objects.latest("pk")
-        return site_settings.url + reverse_lazy("login-key-check", kwargs={"key": self.key})
+
+        if settings.DEBUG:
+            url = "http://localhost:8000"
+        else:
+            url = site_settings.url
+
+        return url + reverse_lazy("login-key-check", kwargs={"key": self.key})

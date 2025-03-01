@@ -1,9 +1,4 @@
-from icecream import ic
-
-
-def merge_fields_with_submission_data(
-    fields: list, data: dict, excluded_labels=[], include_empty=False
-) -> list:
+def merge_fields_with_submission_data(fields: list, data: dict, excluded_labels=[], include_empty=False) -> list:
     results = []
     for field in fields:
         field_id = field.get("id")
@@ -115,3 +110,19 @@ def merge_fields_with_submission_data(
                     )
 
     return results
+
+
+def extract_search_text(entry) -> str:
+    entry_data = merge_fields_with_submission_data(fields=entry.project.fields, data=entry.data, include_empty=True)
+
+    text = []
+    for row in entry_data:
+        if row.get("inputs"):
+            for input_row in row.get("inputs"):
+                text.append(input_row["value"])
+        elif value := row.get("value"):
+            text.append(value)
+
+    text = [t for t in text if t]
+
+    return "\n".join(text)

@@ -49,6 +49,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class EntryAdmin(admin.ModelAdmin):
     list_filter = ("project", "is_active")
     list_display = ("title", "project", "is_active")
+    readonly_fields = ("extracted_search_text",)
 
 
 @admin.register(RatingQuestion)
