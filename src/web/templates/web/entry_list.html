@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-
+{% block title %}{{ current_project.name }}{% endblock %}
 {% block heading %}{{ current_project.name }}{% endblock %}
-
 {% block content_full %}
     {% if request.user.is_staff %}
         <div class="bg-white shadow overflow-hidden sm:rounded-md">

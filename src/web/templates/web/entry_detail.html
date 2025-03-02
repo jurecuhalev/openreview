@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% block title %}#{{ entry.key }} {{ entry.title }} | {{ entry.project.name }}{% endblock %}
 {% block heading %}
     <span class="text-gray-500">#{{ entry.key }}</span>
     {{ entry.title }}
@@ -7,36 +7,36 @@
         <div class="w-4 mt-2">
             <a href="{{ entry.get_admin_url }}"
                class="flex justify-center py-2 px-8 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-               target="_blank"
-            >Edit</a>
+               target="_blank">Edit</a>
         </div>
     {% endif %}
 {% endblock %}
-
 {% block content %}
     <div class="prose prose-lg max-w-full mb-20">
         <dl>
             {% for line in submission_data %}
                 {% if line.inputs %}
-                    <dt class="font-bold text-xl mb-2 mt-6">{{ line.label }}
-                        {% if line.description %}
-                            <span class="font-light text-sm block mb-4">{{ line.description|urlize }}</span>
-                        {% endif %}
+                    <dt class="font-bold text-xl mb-2 mt-6">
+                        {{ line.label }}
+                        {% if line.description %}<span class="font-light text-sm block mb-4">{{ line.description|urlize }}</span>{% endif %}
                     </dt>
                     {% if line.type == 'address' %}
                         <dd class="type-{{ iline.type }} mr-2">
                             {% for iline in line.inputs %}
-                                {{ iline.value }}{% if not forloop.last %},{% endif %}
+                                {{ iline.value }}
+                                {% if not forloop.last %},{% endif %}
                             {% endfor %}
                         </dd>
                     {% else %}
                         <div class="{% if not line.type == 'checkbox' %}flex flex-col{% endif %} h-auto mb-4">
                             {% for iline in line.inputs %}
-                                <div class="">
+                                <div>
                                     {% if line.type != 'name' and line.type != 'checkbox' %}
                                         <dt class="type-{{ iline.type }} font-bold">{{ iline.label }}</dt>
                                     {% endif %}
-                                    <dd class="type-{{ iline.type }} mr-2">{{ iline.value|urlize|linebreaksbr }}</dd>
+                                    <dd class="type-{{ iline.type }} mr-2">
+                                        {{ iline.value|urlize|linebreaksbr }}
+                                    </dd>
                                 </div>
                             {% endfor %}
                         </div>
@@ -46,24 +46,19 @@
                         <dt class="font-bold mb-4 text-xl mb-2 mt-6">{{ line.label }}</dt>
                     {% else %}
                         <dt class="type-{{ line.type }} font-bold mt-4 mb-2">{{ line.label }}</dt>
-                        <dd class="type-{{ line.type }} mb-6">{{ line.value|urlize|linebreaksbr }}</dd>
+                        <dd class="type-{{ line.type }} mb-6">
+                            {{ line.value|urlize|linebreaksbr }}
+                        </dd>
                     {% endif %}
                 {% endif %}
             {% endfor %}
         </dl>
-
     </div>
-
     {% if request.user.is_staff %}
         <header class="mb-6">
-            <h1 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">
-                Feedback from reviewers
-            </h1>
+            <h1 class="text-2xl font-bold leading-tight text-gray-900 max-w-6xl">Feedback from reviewers</h1>
         </header>
-
-
         {% regroup ratings.answers by user__username as ratings_by_user %}
-
         <ul class="divide-y divide-gray-200">
             {% for user_rating in ratings_by_user %}
                 <li class="relative bg-white py-5 px-4 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
@@ -74,61 +69,53 @@
                             </span>
                         </div>
                     </div>
-
                     <dl class="mb-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
                         {% for rating in user_rating.list %}
                             <span>
-                            <dd class="font-semibold text-gray-900 mb-2">{{ rating.question__title }}</dd>
-                            <dt class="mb-5">{{ rating.value }}</dt>
+                                <dd class="font-semibold text-gray-900 mb-2">
+                                    {{ rating.question__title }}
+                                </dd>
+                                <dt class="mb-5">{{ rating.value }}</dt>
                             </span>
                         {% endfor %}
                     </dl>
-
                 </li>
             {% endfor %}
         </ul>
-
         {% if waiting_for_users %}
             <header class="mb-6">
-                <h2 class="text-xl font-bold leading-tight text-gray-900 max-w-6xl">
-                    Waiting for review
-                </h2>
+                <h2 class="text-xl font-bold leading-tight text-gray-900 max-w-6xl">Waiting for review</h2>
             </header>
             <ul>
                 {% for user in waiting_for_users %}
-                    <li class="inline-block">{{ user.userprofile.full_name }}{% if not forloop.last %}, {% endif %}</li>
+                    <li class="inline-block">
+                        {{ user.userprofile.full_name }}
+                        {% if not forloop.last %},{% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         {% endif %}
-
-
-        {% include "web/_reviewer_assign_list.html" with reviewers=entry.get_reviewers  %}
+        {% include "web/_reviewer_assign_list.html" with reviewers=entry.get_reviewers %}
     {% else %}
         <header>
-            <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">
-                Your feedback
-            </h1>
+            <h1 class="text-3xl font-bold leading-tight text-gray-900 max-w-6xl">Your feedback</h1>
         </header>
-        <form class="form" method="post" action="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">
-
+        <form class="form"
+              method="post"
+              action="{% url 'entry-detail' project=entry.project.pk pk=entry.pk %}">
             {% for field in form %}
                 <div class="mt-6">
                     <span class="text-normal font-bold">{{ field.label_tag }}</span>
-                    {% if field.help_text %}
-                        <span class="helptext my-2">{{ field.help_text|safe|linebreaksbr }}</span>
-                    {% endif %}
+                    {% if field.help_text %}<span class="helptext my-2">{{ field.help_text|safe|linebreaksbr }}</span>{% endif %}
                     {{ field.errors }}
                     {{ field }}
                 </div>
             {% endfor %}
-
             {% csrf_token %}
-
             <button type="submit"
                     class="flex justify-center py-2 px-8 mt-6 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Save
             </button>
         </form>
     {% endif %}
-
 {% endblock %}
