@@ -125,4 +125,8 @@ def extract_search_text(entry) -> str:
 
     text = [t for t in text if t]
 
+    for i, t in enumerate(text):
+        if isinstance(t, list):
+            text[i] = "\n".join(t)
+
     return "\n".join(text)

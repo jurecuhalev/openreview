@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.db.models import Case, Count, When
+from django.db.models import Case, Count, Q, When
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -44,6 +44,18 @@ class EntryListView(LoginRequiredMixin, ListView):
     context_object_name = "entry_list"
 
     def get_queryset(self):
+        if self.request.GET.get("search"):
+            search_query = self.request.GET.get("search", "")
+            search_terms = search_query.split()
+
+            queryset = Entry.active.filter(project__pk=self.kwargs["project"])
+
+            if search_terms:
+                for term in search_terms:
+                    queryset = queryset.filter(Q(title__icontains=term) | Q(search_text__icontains=term))
+
+            return queryset
+
         return Entry.active.filter(project__pk=self.kwargs["project"]).order_by("title").prefetch_related("project")
 
     def get_context_data(self, **kwargs):
@@ -63,6 +75,9 @@ class EntryListView(LoginRequiredMixin, ListView):
             }
 
             context["ratings_by_status"] = rating_status
+
+        if self.request.GET.get("search"):
+            context["search_term"] = self.request.GET.get("search")
 
         return context
 

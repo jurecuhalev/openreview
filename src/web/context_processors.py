@@ -1,7 +1,6 @@
-from icecream import ic
-
-from web.models import SiteSettings, Project
 from django.urls import resolve
+
+from web.models import Project, SiteSettings
 
 
 def logo_url(request):
@@ -28,6 +27,9 @@ def current_tab(request):
     url_name = resolve(request.path_info).url_name
 
     if url_name.split("-"):
+        if "list" in url_name:
+            return {"current_tab": "list"}
+
         return {"current_tab": url_name.split("-")[0]}
 
     return {}

@@ -4,8 +4,11 @@ from django.db import migrations, models
 
 
 def index_search_text(apps, schema_editor):
+    from web.submissions_processing import extract_search_text
+
     Entry = apps.get_model("web", "Entry")
     for entry in Entry.objects.all():
+        entry.search_text = extract_search_text(entry)
         entry.save()
 
 
@@ -22,6 +25,12 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL("CREATE EXTENSION IF NOT EXISTS pg_trgm;", "DROP EXTENSION IF EXISTS pg_trgm;"),
         migrations.RunSQL(
-            "CREATE INDEX entry_search_text ON web_entry USING GIN (search_text gin_trgm_ops);"  # noqa
+            "CREATE INDEX idx_entry_title_trgm ON web_entry USING gin(title gin_trgm_ops);",
+            "DROP INDEX idx_entry_title_trgm;",
         ),
+        migrations.RunSQL(
+            "CREATE INDEX entry_search_text ON web_entry USING GIN (search_text gin_trgm_ops);",
+            "DROP INDEX entry_search_text;",
+        ),
+        migrations.RunPython(index_search_text),
     ]
