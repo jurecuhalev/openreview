@@ -22,7 +22,7 @@ dependencies = [
     "sentry-sdk",
     "styleframe==4.2",
     "tablib[xlsx]==3.0.0",
-    "uwsgi>=2.0.28; sys_platform == 'linux'",
+    "uwsgi==*; sys_platform == 'linux'",
     "xlsxwriter==3.0.1",
 ]
 requires-python = ">=3.12,<3.13"
